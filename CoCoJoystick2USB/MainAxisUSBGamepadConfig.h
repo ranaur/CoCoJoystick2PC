@@ -8,14 +8,14 @@
 
 class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
   private:
-  SingleGamepad_ *_gamepad;
+  Gamepad_ *_gamepad;
   int _buttonRed;
   int _buttonBlack;
   
   public:
 
   MainAxisUSBGamepadConfig() {
-    setGamepad(&Gamepad1); // XXX allow multiple gamepads!
+    setGamepad(&Gamepad); // XXX allow multiple gamepads!
     setButtonNumbers(1, 2); // make if configurable?
   };
   
@@ -34,7 +34,7 @@ class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
   void axisXchange(int value) { _gamepad->xAxis(value); };
   void axisYchange(int value) { _gamepad->yAxis(value); };
 
-  void setGamepad(SingleGamepad_ *gamepad) { _gamepad = gamepad; }
+  void setGamepad(Gamepad_ *gamepad) { _gamepad = gamepad; }
 
   void commit() { _gamepad->write(); }
 };
