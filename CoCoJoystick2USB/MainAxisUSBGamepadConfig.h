@@ -24,13 +24,13 @@ class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
     _buttonBlack = buttonBlack;
   }
   
-  void joystickConnected() { _gamepad->begin();  Serial.print("Gamepad BEGIN"); };
+  void joystickConnected() { _gamepad->begin(); };
   void joystickDisonnected() { _gamepad->end(); };
 
-  void btnRedPress() { _gamepad->press(_buttonRed);  Serial.print("Red Press"); Serial.println(_buttonRed); }
-  void btnRedRelease() { _gamepad->release(_buttonRed);  Serial.print("Red Release"); Serial.println(_buttonRed);  }
-  void btnBlackPress()  { _gamepad->press(_buttonBlack); Serial.print("Black Press"); Serial.println(_buttonBlack);  }
-  void btnBlackRelease() { _gamepad->release(_buttonBlack); Serial.print("Black Release"); Serial.println(_buttonBlack); }
+  void btnRedPress() { _gamepad->press(_buttonRed); }
+  void btnRedRelease() { _gamepad->release(_buttonRed); }
+  void btnBlackPress()  { _gamepad->press(_buttonBlack); }
+  void btnBlackRelease() { _gamepad->release(_buttonBlack); }
   void axisXchange(int value) { _gamepad->xAxis(value); };
   void axisYchange(int value) { _gamepad->yAxis(value); };
 
