@@ -12,6 +12,7 @@
 #include "AxisEvent.h"
 #include "ButtonEvent.h"
 #include "CoCoGamepadConfig.h"
+#include "CoCoJoystickDetection.h"
 
 class CoCoJoystick
 {
@@ -20,7 +21,7 @@ class CoCoJoystick
 
 	CoCoJoystick();
 
-	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int EEPROMOffset);
+	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = 0);
 	void loop(uint32_t now = millis());
 	void setConfig(CoCoGamepadConfig *config) { _config = config; };
 
@@ -38,7 +39,7 @@ class CoCoJoystick
   };
   enum STATE state() { return _state; };
   CoCoGamepadConfig *_config;
-  
+
   private:
   enum STATE _state;
 	int _pinAxisX;
@@ -46,7 +47,9 @@ class CoCoJoystick
 	int _pinButtonRed;
 	int _pinButtonBlack;
 	int _EEPROMOffset;
-
+  
+  CoCoJoystickDetection *detector;
+  
 	AxisEvent _axisX;
 	AxisEvent _axisY;
 	ButtonEvent _buttonRed;

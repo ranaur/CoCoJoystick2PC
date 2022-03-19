@@ -12,7 +12,7 @@ class SerialPrintGamepadConfig : public CoCoGamepadConfig {
   }
   
   void joystickConnected() { _changed = true; Serial.println("SerialPrintGamepadConfig: joystickConnected()"); };
-  void joystickDisonnected() { _changed = true; Serial.println("SerialPrintGamepadConfig: joystickDisonnected()"); };
+  void joystickDisconnected() { _changed = true; Serial.println("SerialPrintGamepadConfig: joystickDisconnected()"); };
   void btnRedPress() { _changed = true; Serial.println("SerialPrintGamepadConfig: btnRedPress()"); }
   void btnRedRelease() { _changed = true; Serial.println("SerialPrintGamepadConfig: btnRedRelease()"); }
   void btnBlackPress()  { _changed = true; Serial.println("SerialPrintGamepadConfig: btnBlackPress()"); }

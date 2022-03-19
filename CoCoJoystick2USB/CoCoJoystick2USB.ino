@@ -16,8 +16,9 @@ const int joystick1PinX = A0; // brown
 const int joystick1PinY = A1; // red
 const int joystick1PinBTN_RED = 12; // yellow
 const int joystick1PinBTN_BLACK = 11; // blue
-// orange => gnd
+const int joystick1PinShell = 10; // mesh / outer shell
 // green => +5
+// orange => gnd
 const int calibrateButtonPin = 8;
 
 const int EEPROMOffset = 0;
@@ -31,7 +32,7 @@ void setup() {
   Serial.begin(9600);
   //while(!Serial) {} // for Leonardo
 #endif
-  joystick1.setup(joystick1PinX, joystick1PinY, joystick1PinBTN_RED, joystick1PinBTN_BLACK, EEPROMOffset);
+  joystick1.setup(joystick1PinX, joystick1PinY, joystick1PinBTN_RED, joystick1PinBTN_BLACK, joystick1PinShell, EEPROMOffset);
   calibrateButton.setup(calibrateButtonPin);
 }
 

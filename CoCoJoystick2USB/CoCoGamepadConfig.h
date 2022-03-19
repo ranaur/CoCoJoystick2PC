@@ -8,7 +8,7 @@ class CoCoGamepadConfig {
   CoCoGamepadConfig() {};
   
   virtual void joystickConnected();
-  virtual void joystickDisonnected();
+  virtual void joystickDisconnected();
   virtual void btnRedPress();
   virtual void btnBlackPress();
   virtual void btnRedRelease();

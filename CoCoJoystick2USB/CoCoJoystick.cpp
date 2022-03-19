@@ -23,6 +23,14 @@ unsigned long eeprom_crc(int start, int length) {
   return crc;
 }
 
+void joystickConnected(void *obj) {
+  ((CoCoJoystick *)obj)->_config->joystickConnected();
+}
+
+void joystickDisconnected(void *obj) {
+  ((CoCoJoystick *)obj)->_config->joystickDisconnected();
+}
+
 CoCoJoystick::CoCoJoystick() {
 	_pinAxisX = -1;
 	_pinAxisY = -1;
@@ -91,9 +99,11 @@ void CoCoJoystick::saveCalibration() {
   //Serial.println(savedCRC);
 }
 
-void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int EEPROMOffset = -1)
+void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)
 {
-  _config->joystickConnected(); // XXX use detection routines
+  //_config->joystickConnected(); // XXX use detection routines
+  detector = new CoCoJoystickDetection();
+  detector->setup(pinShell);
   
 	_pinAxisX = pinAxisX;
 	_pinAxisY = pinAxisY;
@@ -118,7 +128,6 @@ void pressRed(uint32_t forMs, void *obj) {
   if(((CoCoJoystick *)obj)->state() == CoCoJoystick::STATE::CALIBRATING_EDGES && forMs > 500) {
     ((CoCoJoystick *)obj)->centerCalibration();
   }
-  Serial.print("press forMs = ");Serial.println(forMs);
   ((CoCoJoystick *)obj)->_config->btnRedPress();
 }
 
@@ -127,7 +136,6 @@ void pressBlack(uint32_t forMs, void *obj) {
 }
 
 void releaseRed(uint32_t forMs, void *obj) {
-  Serial.print("release forMs = ");Serial.println(forMs);
   ((CoCoJoystick *)obj)->_config->btnRedRelease();
 }
 
@@ -144,6 +152,8 @@ void changeY(int value, void *obj) {
 }
 
 void CoCoJoystick::loop(uint32_t now = millis()) {
+  if(! detector->loop(joystickConnected, joystickDisconnected, this) ) return;
+  
 	_buttonRed.loop(now);
 	_buttonRed.onPressed(::pressRed, this);
 	_buttonRed.onReleased(::releaseRed, this);
@@ -158,7 +168,6 @@ void CoCoJoystick::loop(uint32_t now = millis()) {
   _config->commit();
   // implementar inversão de joysticks/modo _calibrateButton.onRelease(..., 0);
   // implementar calibragem _calibrateButton.onRelease(..., 3000);
-
 }
 
 void CoCoJoystick::startCalibration() {
