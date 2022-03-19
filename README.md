@@ -63,13 +63,19 @@ to
 
 	//#pragma message "Using default ASCII layout for keyboard modules"
 
+# Tags
+
+Git tags for the project
+
+v0.1 - first working version, one joystick, calibration.
+
 # TODO
 
 * Add Joystick Detection routines and propagate the event do begin/end
 	* on connect should call CoCoGamepadConfig::joystickConnected();
 	* on disconnect should call CoCoGamepadConfigjoystickDisonnected();
 
-* Allow more than one joystick (lear about Multiple Reports or use Gamepad 1 to 4 to handle it)
+* Allow more than one joystick (learn about Multiple Reports or use Gamepad 1 to 4 to handle it)
 	* with two joysticks make a switch/button to invert them
 	* if you press the button for a long time (3 sec) and have only one joystick, make if double (act like to USB joysticks at the same time)
 	* Save the setting on EEPROM?
