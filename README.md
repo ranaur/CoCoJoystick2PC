@@ -67,13 +67,12 @@ to
 
 Git tags for the project
 
-v0.1 - first working version, one joystick, calibration.
+v0.1 -	First working version, one joystick, calibration.
+v0.2 -	Fix: Now it appears as only one joystick.
+	Less unuseful debug info.
+	Detection Routines added. (needs extre wire)
 
 # TODO
-
-* Add Joystick Detection routines and propagate the event do begin/end
-	* on connect should call CoCoGamepadConfig::joystickConnected();
-	* on disconnect should call CoCoGamepadConfigjoystickDisonnected();
 
 * Allow more than one joystick (learn about Multiple Reports or use Gamepad 1 to 4 to handle it)
 	* with two joysticks make a switch/button to invert them
@@ -85,15 +84,13 @@ v0.1 - first working version, one joystick, calibration.
 	* D-Pad and Buttons 0 and 1
 	* P-Hat and Buttons 0 and 1
 	* with 2 joysticks, left Joy to the left axis control, right joy to right axis control.
-
- * Criar USBGamepadConfigs:
- *    Red => 1 Black => 2 X => AxisX Y => AxisY
- *    Red => 1 Black => 1 X => AxisX Y => AxisY
- *    Red => 12346 Black => 12346 X => AxisX Y => AxisY
- *    Red => 1 Black => 2 X => RightAxisX => RightAxisY
- *    Red => 1 Black => 2 X => LeftAxisX => LeftAxisY
- *        (idem para o 11)
- */
+	* Criar USBGamepadConfigs:
+	*    Red => 1 Black => 2 X => AxisX Y => AxisY
+	*    Red => 1 Black => 1 X => AxisX Y => AxisY
+	*    Red => 12346 Black => 12346 X => AxisX Y => AxisY
+	*    Red => 1 Black => 2 X => RightAxisX => RightAxisY
+	*    Red => 1 Black => 2 X => LeftAxisX => LeftAxisY
+	*        (idem para o 11)
 
 * Allow a complete calibration reset if press the calibration button for more than 10 sec
 
