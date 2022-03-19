@@ -74,22 +74,15 @@ void Calibration::printCalibration() {
 
 int Calibration::map(int real) {
   int mapped;
-	// return map(rawValueX, 0, 1023, _output.minimum, _output.maximum);
+	// return map(rawValueX, 0, 1023, _output.minimum, _output.maximum); // old way
 	if(real >= _center.minimum && real <= _center.maximum) {
 	  mapped = _outputCenter; 
-	  //Serial.print("C");
 	}
 	if(real < _center.minimum) {
 	  mapped = ::map(real, _edge.minimum, _center.minimum, _output.minimum, _outputCenter); 
-    //Serial.print("L");
 	}
 	if(real > _center.maximum) {
 	  mapped = ::map(real, _center.maximum, _edge.maximum, _outputCenter, _output.maximum); 
-	  //Serial.print("U");
 	}
-  //Serial.print("real = ");
-  //Serial.println(real);
-  //Serial.print("mapped = ");
-  //Serial.println(mapped);
   return mapped;
 }

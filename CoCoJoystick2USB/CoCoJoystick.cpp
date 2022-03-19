@@ -49,9 +49,6 @@ bool CoCoJoystick::checkEEPROM() {
   unsigned long savedCRC;
   EEPROM.get(EEPROMCRCOffset(), savedCRC);
 
-  Serial.println("CRCs:");
-  Serial.println(savedCRC);
-  Serial.println(calculatedCRC);
   return savedCRC == calculatedCRC;
 }
 
@@ -68,19 +65,26 @@ void CoCoJoystick::loadCalibration() {
 	if(_EEPROMOffset == -1) { return; };
 
 	if(checkEEPROM()) {
-    //Serial.println("Loading calibration from EEPROM");
+#ifdef DEBUG
+    Serial.println("Loading calibration from EEPROM");
+#endif
     _axisX.loadCalibration();
     _axisY.loadCalibration();
 	} else {
-    //Serial.println("Loading default calibration");
+#ifdef DEBUG
+    Serial.println("Loading default calibration");
+#endif
     _axisX.setDefaultCalibration();
     _axisY.setDefaultCalibration();
     //saveCalibration();
 	}
-  //Serial.println("Axis X Calibration:");
-  //_axisX.printCalibration();
-  //Serial.println("Axis Y Calibration:");
-  //_axisY.printCalibration();
+
+#ifdef DEBUG
+  Serial.println("Axis X Calibration:");
+  _axisX.printCalibration();
+  Serial.println("Axis Y Calibration:");
+  _axisY.printCalibration();
+#endif
 }
 
 void CoCoJoystick::saveCalibration() {
@@ -90,13 +94,7 @@ void CoCoJoystick::saveCalibration() {
 	_axisY.saveCalibration();
   
   unsigned long crc = calculateEEPROMCRC();
-  //Serial.println("NEW CRCs:");
-  //Serial.println(crc);
   EEPROM.put(EEPROMCRCOffset(), crc);
-
-  //unsigned long savedCRC;
-  //EEPROM.get(EEPROMCRCOffset(), savedCRC);
-  //Serial.println(savedCRC);
 }
 
 void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)
@@ -175,24 +173,34 @@ void CoCoJoystick::startCalibration() {
   _axisX.startCalibration();
   _axisY.startCalibration();
 
+#ifdef DEBUG
   Serial.println("BEGIN CALIBRATION ROUTINE.");
   Serial.println("Move joystick to maximum points.");
+#endif
 }
 
 void CoCoJoystick::centerCalibration() {
   _state = STATE::CALIBRATING_CENTERS;
   _axisX.centerCalibration();
   _axisY.centerCalibration();
+#ifdef DEBUG
   Serial.println("CALIBRATE CENTER ROUTINE.");
   Serial.println("Set joystick to center point.");
+#endif
 }
 
 void CoCoJoystick::endCalibration() {
   _state = STATE::OPERATING;
+#ifdef DEBUG
   Serial.println("Axis X:");
+#endif
   _axisX.endCalibration();
+#ifdef DEBUG
   Serial.println("Axis Y:");
+#endif
   _axisY.endCalibration();
   saveCalibration();
+#ifdef DEBUG
   Serial.println("CALIBRATION ROUTINE ENDED.");
+#endif
 }

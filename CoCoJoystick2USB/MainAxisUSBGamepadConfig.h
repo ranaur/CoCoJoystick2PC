@@ -24,7 +24,7 @@ class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
     _buttonBlack = buttonBlack;
   }
   
-  void joystickConnected() { _gamepad->begin(); Serial.println("BEGIN"); };
+  void joystickConnected() { _gamepad->begin(); };
   void joystickDisconnected() { _gamepad->end(); };
 
   void btnRedPress() { _gamepad->press(_buttonRed); }
