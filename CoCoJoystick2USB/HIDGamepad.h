@@ -28,14 +28,6 @@ THE SOFTWARE.
 #include "HID.h"
 #include "HID-Settings.h"
 
-typedef struct {
-  int16_t xAxis;
-  int16_t yAxis;
-  uint8_t buttonRed : 1;
-  uint8_t buttonBlack : 1;
-  uint8_t padding : 6;
-} HID_GamepadReport_Data_t_old;
-
 typedef union ATTRIBUTE_PACKED {
   // 32 Buttons, 6 Axis, 2 D-Pads
   uint8_t whole8[0];
@@ -55,12 +47,6 @@ typedef union ATTRIBUTE_PACKED {
 
     int16_t xAxis;
     int16_t yAxis;
-
-    int16_t rxAxis;
-    int16_t ryAxis;
-
-    int8_t  zAxis;
-    int8_t  rzAxis;
   };
 } HID_GamepadReport_Data_t;
 
@@ -88,6 +74,7 @@ public:
 
 protected: 
     virtual inline void SendReport(void* data, int length) { 
+#ifdef DEBUG
       Serial.print("REPORT [");
       Serial.print(length, HEX);
       Serial.print("]: ");
@@ -96,6 +83,7 @@ protected:
         printByte(((uint8_t *)data)[i]);
       }
       Serial.println("");
+#endif
       HID().SendReport(HID_REPORTID_GAMEPAD, data, length);
       };
     HID_GamepadReport_Data_t _report;
