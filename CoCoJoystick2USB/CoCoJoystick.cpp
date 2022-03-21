@@ -1,8 +1,9 @@
 #include "Arduino.h"
 #include "CoCoJoystick.h"
 
-#include "SerialPrintGamepadConfig.h"
-#include "MainAxisUSBGamepadConfig.h"
+//#include "SerialPrintGamepadConfig.h"
+//#include "MainAxisUSBGamepadConfig.h"
+#include "MainAxisHIDUSBGamepadConfig.h"
 
 #include <EEPROM.h>
 
@@ -38,7 +39,8 @@ CoCoJoystick::CoCoJoystick() {
 	_pinButtonBlack = -1;
 	_EEPROMOffset = -1;
   //setConfig(new SerialPrintGamepadConfig());
-  setConfig(new MainAxisUSBGamepadConfig()); // Allow change the behaviour of the GamePad (try #defines, then go for a switch)
+  //setConfig(new MainAxisUSBGamepadConfig()); // Allow change the behaviour of the GamePad (try #defines, then go for a switch)
+  setConfig(new MainAxisHIDUSBGamepadConfig()); // Allow change the behaviour of the GamePad (try #defines, then go for a switch)
 }
 
 bool CoCoJoystick::checkEEPROM() {
