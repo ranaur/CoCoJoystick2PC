@@ -6,9 +6,13 @@
 #ifndef CoCoJoystick_h
 #define CoCoJoystick_h
 
+#include "config.h"
 #include "Arduino.h"
 
-#include <EEPROM.h>
+#ifdef CALIBRATION
+#define COCOJOYSTICK_PERSISTENCE
+#endif
+
 #include "AxisEvent.h"
 #include "ButtonEvent.h"
 #include "CoCoGamepadConfig.h"
@@ -16,50 +20,62 @@
 
 class CoCoJoystick
 {
-  public:
-	static const int EEPROMfootprint = sizeof(Calibration) + sizeof(Calibration) + sizeof(unsigned long);
-
-	CoCoJoystick();
-
-	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = 0);
-	void loop(uint32_t now = millis());
-	void setConfig(CoCoGamepadConfig *config) { _config = config; };
-
-  void loadCalibration();
-  void saveCalibration();
-  
-  void startCalibration();
-  void centerCalibration();
-  void endCalibration();
-
-  enum STATE {
-    OPERATING = 0,
-    CALIBRATING_EDGES = 1,
-    CALIBRATING_CENTERS = 2,
-  };
-  enum STATE state() { return _state; };
-  CoCoGamepadConfig *_config;
-
   private:
-  enum STATE _state;
-	int _pinAxisX;
-	int _pinAxisY;
-	int _pinButtonRed;
-	int _pinButtonBlack;
-	int _EEPROMOffset;
+      // Sensors
+    CoCoJoystickDetection *detector;
+    AxisEvent _axisX;
+    AxisEvent _axisY;
+    ButtonEvent _buttonRed;
+    ButtonEvent _buttonBlack;
+   
+#ifdef CALIBRATION
+    static const int EEPROM_DataFootprint = sizeof(mappingData_t) * 2; // XXX
+    static const int EEPROM_CRCFootprint = sizeof(unsigned long);
+    
+    int _EEPROMOffset;
+
+    enum STATE {
+      OPERATING = 0,
+      CALIBRATING_EDGES = 1,
+      CALIBRATING_CENTERS = 2,
+    };
+    enum STATE _state;
+#endif
+
+#ifdef COCOJOYSTICK_PERSISTENCE
+    //static const int EEPROMfootprint = sizeof(int) * 4 * 2 + sizeof(unsigned long);
   
-  CoCoJoystickDetection *detector;
+      // save and loading from EEPROM
+    unsigned long calculateEEPROMCRC();
+    void saveCRC();
+#endif
+
+    static void pressRed(uint32_t forMs, void *obj);
+  public:
+      // Output
+    CoCoGamepadConfig *_config;
+
+  	CoCoJoystick();
   
-	AxisEvent _axisX;
-	AxisEvent _axisY;
-	ButtonEvent _buttonRed;
-	ButtonEvent _buttonBlack;
-  
-  unsigned long calculateEEPROMCRC();
-  int EEPROMCRCOffset();
-	bool checkEEPROM();
-  static void press(void *obj);
-  static void release(void *obj);
+  	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = 0);
+  	void loop(uint32_t now = millis());
+  	void setConfig(CoCoGamepadConfig *config) { _config = config; };
+
+#ifdef CALIBRATION
+      // Calibration process
+    enum STATE state() { return _state; };
+    void startCalibration();
+    void centerCalibration();
+    void endCalibration();
+#endif
+
+#ifdef COCOJOYSTICK_PERSISTENCE
+      // save and loading from EEPROM
+    void setEEPROMOffset(int EEPROMOffset) { _EEPROMOffset = EEPROMOffset; };
+    bool checkCRC();
+    void saveCalibration();
+    void loadCalibration();
+#endif
 };
 
 #endif

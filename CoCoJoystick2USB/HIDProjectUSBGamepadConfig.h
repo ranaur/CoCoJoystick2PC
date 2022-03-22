@@ -6,7 +6,7 @@
 #include <HID-Project.h>
 #include <HID-Settings.h>
 
-class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
+class HIDProjectUSBGamepadConfig : public CoCoGamepadConfig {
   private:
   Gamepad_ *_gamepad;
   int _buttonRed;
@@ -14,7 +14,7 @@ class MainAxisUSBGamepadConfig : public CoCoGamepadConfig {
   
   public:
 
-  MainAxisUSBGamepadConfig() {
+  HIDProjectUSBGamepadConfig() {
     setGamepad(&Gamepad); // XXX allow multiple gamepads!
     setButtonNumbers(1, 2); // make if configurable?
   };

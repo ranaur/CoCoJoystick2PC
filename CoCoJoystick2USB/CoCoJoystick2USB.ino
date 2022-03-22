@@ -7,10 +7,10 @@
  *    4     2       5 => +5 Pots X & Y
  *       3          6 => Fire 2
  */
+#include "config.h"
+
 #include "CoCoJoystick.h"
 #include "ButtonEvent.h"
-
-#define DEBUG
 
 const int joystick1PinX = A0; // brown
 const int joystick1PinY = A1; // red
@@ -19,32 +19,48 @@ const int joystick1PinBTN_BLACK = 11; // blue
 const int joystick1PinShell = 10; // mesh / outer shell
 // green => +5
 // orange => gnd
+
+#ifdef CALIBRATION
 const int calibrateButtonPin = 8;
+const int calibrateLedPin = LED_BUILTIN;
+ButtonEvent calibrateButton;
+#endif
 
 const int EEPROMOffset = 0;
-
-ButtonEvent calibrateButton;
 
 CoCoJoystick joystick1;
 
 void setup() {
 #ifdef DEBUG
   Serial.begin(9600);
-  //while(!Serial) {} // for Leonardo
+  while(!Serial) {} // for Leonardo
+  Serial.println("::setup()");
 #endif
+
   joystick1.setup(joystick1PinX, joystick1PinY, joystick1PinBTN_RED, joystick1PinBTN_BLACK, joystick1PinShell, EEPROMOffset);
+
+#ifdef CALIBRATION
+  Serial.println("::calibrateButton.setup()");
   calibrateButton.setup(calibrateButtonPin);
+#endif
 }
 
+#ifdef CALIBRATION
 void calibrateStart(uint32_t forMs, void *obj) {
+#ifdef DEBUG
+  Serial.println("::calibrateStart(...)");
+#endif
   joystick1.startCalibration();
 }
+#endif
 
 void loop() {
   uint32_t now = millis();
   
+#ifdef CALIBRATION
   calibrateButton.loop(now);
   calibrateButton.onPressed(calibrateStart);
+#endif
 
   joystick1.loop(now);
 }

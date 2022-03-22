@@ -1,6 +1,7 @@
 #ifndef CoCoGamepadConfig_h
 #define CoCoGamepadConfig_h
 
+#include "config.h"
 #include "Arduino.h"
 
 class CoCoGamepadConfig {

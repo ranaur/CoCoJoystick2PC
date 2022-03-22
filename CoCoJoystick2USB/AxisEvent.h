@@ -1,58 +1,79 @@
-/*
-  AxisEvent.h - Library for reading joystick.
-  Created by Gustavo Schoenaker
-  Released into the public domain.
-*/
+/**
+ * AxisEvent.h - Read an analog pin and propagate an event on any change
+ * Created by Gustavo Schoenaker on 2022
+ * 
+ * #DFFINES:
+ *  CALIBRATION: it will allow calibration routines
+ *  DEBUG_AXISEVENT: show verbose results on serial port
+ * 
+ * FUNCTIONS:
+ *  setup() => must be called on setup() function of the main program to configure the axis pin
+ *  onChanged() => must be called on loop() function of the main program
+ *  loop() => does nothing
+ *  
+ */
 #ifndef AxisEvent_h
 #define AxisEvent_h
 
+#include "config.h"
 #include "Arduino.h"
-#include "Calibration.h"
+
+#include "Mapping.h"
 
 class AxisEvent {
-  public:
-    AxisEvent();
-    void setup(int pin, int EEPROMOffset, int tolerance);
-    
-    void onChanged(void(*callback)(int, void *), void *obj = (void *)0, uint32_t now = millis());
-    
-    void loadCalibration();
-    void saveCalibration();
-    void setDefaultCalibration();
-    void startCalibration();
-    void centerCalibration();
-    void endCalibration();
-    void printCalibration();
   private:
       // defaults if EEPROM does not have consistent data
-    static const int defaultMaximum = 1023;
-    static const int defaultMinimum = 0;
-    static const int defaultCenterDelta = 16;
-    static const int defaultCenterMinium = (defaultMaximum + defaultMinimum) / 2 - defaultCenterDelta;
-    static const int defaultCenterMaximum = (defaultMaximum + defaultMinimum) / 2 + defaultCenterDelta;
-
+    static const int defaultInputMaximum = 1023; // 10 bit DAC (From Leonardo)
+    static const int defaultInputMinimum = 0;
+    static const int defaultInputCenterDelta = 16;
+    static const int defaultInputCenterMinium = (defaultInputMaximum + defaultInputMinimum) / 2 - defaultInputCenterDelta;
+    static const int defaultInputCenterMaximum = (defaultInputMaximum + defaultInputMinimum) / 2 + defaultInputCenterDelta;
+    static const int defaultOutputMinimum = -32767; // USB Reference
+    static const int defaultOutputCenter = 0;
+    static const int defaultOutputMaximum = 32767;
+  
       // Config vars
     int _pin;
     int _tolerance;
 
-      // Operational Vars
     int _lastValue;
-    Calibration calibration;
-    struct {
-      struct {
-        int minimum;
-        int maximum;
-      } _edge;
-      struct {
-        int minimum;
-        int maximum;
-      } _center;
-    } _temporaryCalibration;
+    Mapping mapping;
+
+  public:
+    AxisEvent();
+
+    void setup(int pin, int tolerance);
+    void setOutput(int minimum, int maximum, int center);
+    void setDefault();
+    void loop() {}; 
+    
+    void onChanged(void(*callback)(int, void *), void *obj = (void *)0, uint32_t now = millis());
+
+    void setInput(mappingData_t newValue) { mapping.setInput(newValue); };
+    mappingData_t *getInput() { return mapping.getInput(); };
+
+  protected:
+
+  public:
+#ifdef CALIBRATION
+    static const int EEPROMSize = sizeof(int) * 4;
+    void setEEPROMOffset(int EEPROMOffset);
+    void startCalibration();
+    void centerCalibration();
+    void endCalibration();
+    void printCalibration();
+#endif
+
+#ifdef CALIBRATION
+    int _EEPROMOffset;
+    mappingData_t tempCalibration;
+
     enum STATE {
       OPERATING = 0,
       CALIBRATING_EDGES = 1,
       CALIBRATING_CENTERS = 2,
     } _state;
+#endif
 };
 
 #endif

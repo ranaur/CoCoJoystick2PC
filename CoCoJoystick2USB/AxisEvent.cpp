@@ -1,18 +1,37 @@
 #include "AxisEvent.h"
 
+#ifdef CALIBRATION
+#include <EEPROM.h>
+#endif
+
 AxisEvent::AxisEvent() {
   _pin = -1;
+#ifdef CALIBRATION
   _state = OPERATING;
+#endif
 }
 
-void AxisEvent::setup(int pin, int EEPROMOffset, int tolerance = 0) {
+void AxisEvent::setup(int pin, int tolerance = 0) {
   _pin = pin;
   _tolerance = tolerance;
-  calibration.setEEPROMOffset(EEPROMOffset);
-  calibration.loadEEPROM();
-  //calibration.setOutput(DEFAULT_MINIMUM, DEFAULT_CENTER, DEFAULT_MAXIMUM);
+  
+  setOutput(defaultOutputMinimum, defaultOutputMaximum, defaultOutputCenter);
+  setDefault();
 
   pinMode(pin, INPUT);
+}
+
+void AxisEvent::setOutput(int minimum, int maximum, int center) {
+  mapping.outputMinimum = minimum;
+  mapping.outputMaximum = maximum;
+  mapping.outputCenter = center;
+}
+
+void AxisEvent::setDefault() {
+  mapping.input.edgeMinimum = defaultInputMinimum;
+  mapping.input.edgeMaximum = defaultInputMaximum;
+  mapping.input.centerMinimum = defaultInputCenterMinium;
+  mapping.input.centerMaximum = defaultInputCenterMaximum;
 }
 
 void AxisEvent::onChanged(void(*callback)(int, void *), void *obj = (void *)0, uint32_t now = millis()) {
@@ -20,41 +39,32 @@ void AxisEvent::onChanged(void(*callback)(int, void *), void *obj = (void *)0, u
 
   int value = analogRead(_pin);
 
+#ifdef CALIBRATION
   if(_state == STATE::CALIBRATING_EDGES) {
-    _temporaryCalibration._edge.minimum = min(_temporaryCalibration._edge.minimum, value);
-    _temporaryCalibration._edge.maximum = max(_temporaryCalibration._edge.maximum, value);
+    tempCalibration.edgeMinimum = min(tempCalibration.edgeMinimum, value);
+    tempCalibration.edgeMaximum = max(tempCalibration.edgeMaximum, value);
   }
   
   if(_state == STATE::CALIBRATING_CENTERS) {
-    _temporaryCalibration._center.minimum = min(_temporaryCalibration._center.minimum, value);
-    _temporaryCalibration._center.maximum = max(_temporaryCalibration._center.maximum, value);
+    tempCalibration.centerMinimum = min(tempCalibration.centerMinimum, value);
+    tempCalibration.centerMaximum = max(tempCalibration.centerMaximum, value);
   }
+#endif
 
   if(_lastValue - value > _tolerance || value - _lastValue > _tolerance) {
     _lastValue = value;
-    callback(calibration.map(value), obj); 
+    callback(mapping.map(value), obj); 
   }
 }
 
-void AxisEvent::setDefaultCalibration() {
-    calibration.setEdge(defaultMinimum, defaultMaximum);
-    calibration.setCenter(defaultCenterMinium , defaultCenterMaximum);
-}
-
-void AxisEvent::loadCalibration() {
-    calibration.loadEEPROM();
-}
-
-void AxisEvent::saveCalibration() {
-    calibration.saveEEPROM();
-}
+#ifdef CALIBRATION
 
 void AxisEvent::startCalibration() {
   _state = STATE::CALIBRATING_EDGES;
-  _temporaryCalibration._edge.minimum = defaultMaximum;
-  _temporaryCalibration._edge.maximum = defaultMinimum;
-  _temporaryCalibration._center.minimum = defaultMaximum;
-  _temporaryCalibration._center.maximum = defaultMinimum;
+  tempCalibration.edgeMinimum = defaultInputMaximum;
+  tempCalibration.edgeMaximum = defaultInputMinimum;
+  tempCalibration.centerMinimum = defaultInputMaximum;
+  tempCalibration.centerMaximum = defaultInputMinimum;
 }
 
 void AxisEvent::centerCalibration() {
@@ -63,11 +73,13 @@ void AxisEvent::centerCalibration() {
 
 void AxisEvent::endCalibration() {
   _state = STATE::OPERATING;
-  calibration.setEdge(_temporaryCalibration._edge.minimum, _temporaryCalibration._edge.maximum);
-  calibration.setCenter(_temporaryCalibration._center.minimum, _temporaryCalibration._center.maximum);
+  mapping.input.edgeMinimum = tempCalibration.edgeMinimum;
+  mapping.input.edgeMaximum = tempCalibration.edgeMaximum;
+  mapping.input.centerMinimum = tempCalibration.centerMinimum;
+  mapping.input.centerMaximum = tempCalibration.centerMaximum;
 }
 
 void AxisEvent::printCalibration() {
-  calibration.printOutput();
-  calibration.printCalibration();
+  mapping.print();
 }
+#endif
