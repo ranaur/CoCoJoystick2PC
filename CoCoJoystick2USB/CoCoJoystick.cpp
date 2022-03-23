@@ -5,9 +5,11 @@
 #endif
 
 #define COCOJOYSTICK_AXIS_TOLERANCE 16
+
+  // TODO: OINK!
 //#include "SerialPrintCoCoJoystickEvent.h"
-//#include "HIDProjectCoCoJoystickEvent.h"
-#include "USBCoCoJoystickEvent.h"
+#include "HIDProjectUSBCoCoJoystickEvent.h"
+//#include "USBCoCoJoystickEvent.h"
 
 #ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long eeprom_crc(int start, int length) {
@@ -51,9 +53,17 @@ void joystickDisconnected(void *obj) {
 
 CoCoJoystick::CoCoJoystick() {
   setEEPROMOffset(-1);
-  // Allow change the behaviour of the GamePad (try #defines, then go for a switch)
-  //setConfig(new SerialPrintCoCoJoystickEvent());
+
+  // TODO: OINK!
+#ifdef SerialPrintCoCoJoystickEvent_h
+  setConfig(new SerialPrintCoCoJoystickEvent());
+#endif
+#ifdef HIDProjectUSBCoCoJoystickEvent_h
+  setConfig(new HIDProjectUSBCoCoJoystickEvent());
+#endif
+#ifdef USBCoCoJoystickEvent_h
   setConfig(new USBCoCoJoystickEvent()); 
+#endif
 }
 
 void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)

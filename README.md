@@ -81,21 +81,21 @@ Git tags for the project
 
 v0.1 -	First working version, one joystick, calibration.
 v0.2 -	Fix: Now it appears as only one joystick.
-	Less unuseful debug info.
-	Detection Routines added. (needs extre wire)
+	Less debug info.
+	Detection Routines added. (needs extra wire shell of the on connector)
 v0.3 - Now the HID report only what the joystick really have (2 axis and two buttons)
 	Major refactor on calibration
 v0.3.1 - More refactor on calibration. Timeout in 10 sec. Button now resets calibration after 3 secs. Black button cancels calibration.
+v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 
 # TODO
 
 ## Next Steps
-* Detect Joystick on loose analog input
-	- Make a detection on analog noise (it is disconnected when the axis has a high variance)
-
 * Refactor *GamepadConfig for some better name (CoCoJoystickEventsHandlers?)
 
-* Test changing the HID number
+* Make JoystickOutput give the minimum/maximum output to the Axis Class
+
+* Test changing the HID number (did not work) Study single Report and try
 
 ## Waiting for the new board that works on breadboard
 * Add a repeater on buttons

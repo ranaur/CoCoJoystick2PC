@@ -1,5 +1,5 @@
-#ifndef MainAxisHIDUSBCoCoJoystickEvent_h
-#define MainAxisHIDUSBCoCoJoystickEvent_h
+#ifndef USBCoCoJoystickEvent_h
+#define USBCoCoJoystickEvent_h
 
   // Show on serial the report data
 #undef DEBUG_REPORT

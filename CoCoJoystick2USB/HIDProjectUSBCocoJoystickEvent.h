@@ -3,7 +3,7 @@
 
 // TODO? Track if any value changed on write?
 
-#include "CoCoGamepadConfig.h"
+#include "CoCoJoystickEvent.h"
 
 #include <HID-Project.h>
 #include <HID-Settings.h>
