@@ -45,7 +45,10 @@ class AxisEvent {
     void setup(int pin, int tolerance);
     void setOutput(int minimum, int maximum, int center);
     void setDefault();
-    void loop() {}; 
+    void loop() {};
+    
+    int rawValue() { return _lastValue; }
+    int value() { return mapping.map(rawValue()); }
     
     void onChanged(void(*callback)(int, void *), void *obj = (void *)0, uint32_t now = millis());
 
@@ -62,6 +65,9 @@ class AxisEvent {
     void centerCalibration();
     void endCalibration();
     void printCalibration();
+    void resetCalibration();
+    void cancelCalibration();
+    int centerValue() { return mapping.centerValue(); };
 #endif
 
 #ifdef CALIBRATION

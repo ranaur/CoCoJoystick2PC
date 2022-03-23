@@ -37,23 +37,23 @@ void AxisEvent::setDefault() {
 void AxisEvent::onChanged(void(*callback)(int, void *), void *obj = (void *)0, uint32_t now = millis()) {
   if(_pin == -1) return; // must use setup() first
 
-  int value = analogRead(_pin);
+  int rawValue = analogRead(_pin);
 
 #ifdef CALIBRATION
   if(_state == STATE::CALIBRATING_EDGES) {
-    tempCalibration.edgeMinimum = min(tempCalibration.edgeMinimum, value);
-    tempCalibration.edgeMaximum = max(tempCalibration.edgeMaximum, value);
+    tempCalibration.edgeMinimum = min(tempCalibration.edgeMinimum, rawValue);
+    tempCalibration.edgeMaximum = max(tempCalibration.edgeMaximum, rawValue);
   }
   
   if(_state == STATE::CALIBRATING_CENTERS) {
-    tempCalibration.centerMinimum = min(tempCalibration.centerMinimum, value);
-    tempCalibration.centerMaximum = max(tempCalibration.centerMaximum, value);
+    tempCalibration.centerMinimum = min(tempCalibration.centerMinimum, rawValue);
+    tempCalibration.centerMaximum = max(tempCalibration.centerMaximum, rawValue);
   }
 #endif
 
-  if(_lastValue - value > _tolerance || value - _lastValue > _tolerance) {
-    _lastValue = value;
-    callback(mapping.map(value), obj); 
+  if(_lastValue - rawValue > _tolerance || rawValue - _lastValue > _tolerance) {
+    _lastValue = rawValue;
+    callback(value(), obj); 
   }
 }
 
@@ -77,6 +77,15 @@ void AxisEvent::endCalibration() {
   mapping.input.edgeMaximum = tempCalibration.edgeMaximum;
   mapping.input.centerMinimum = tempCalibration.centerMinimum;
   mapping.input.centerMaximum = tempCalibration.centerMaximum;
+}
+
+void AxisEvent::cancelCalibration() {
+  _state = STATE::OPERATING;
+}
+
+void AxisEvent::resetCalibration() {
+  cancelCalibration();
+  setDefault();
 }
 
 void AxisEvent::printCalibration() {
