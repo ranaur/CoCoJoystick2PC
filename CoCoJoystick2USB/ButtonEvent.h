@@ -17,8 +17,8 @@ class ButtonEvent {
 		void loop(uint32_t now = millis());
 		void onPressed(void(*callback)(uint32_t, void *), void *obj = null);
 		void onReleased(void(*callback)(uint32_t, void *), void *obj = null);
-		void onPressedFor(void(*callback)(void *), uint32_t forMs, void *obj = null);
-		void onReleasedFor(void(*callback)(void *), uint32_t forMs, void *obj = null);
+		void onPressedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null);
+		void onReleasedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null);
 		
 		void printState();
 	private:

@@ -90,16 +90,28 @@ void ButtonEvent::onReleased(void(*callback)(uint32_t, void *), void *obj = null
 	}
 }
 
-void ButtonEvent::onPressedFor(void(*callback)(void *), uint32_t forMs, void *obj = null) {
-	if(_state == _pressedState && _now - _pressedTS > forMs) {
-		callback(obj);
-		//_pressedTS = _now; // would reset and generate a call for every forMs millis
+void ButtonEvent::onPressedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null) {
+	if(_state == _pressedState) {
+	  if(_now - _pressedTS > forMs) {
+      if(!actuated) {
+        actuated = true;
+        callback(obj);
+      }
+      return;
+  	}
 	}
+	actuated = false;
 }
 
-void ButtonEvent::onReleasedFor(void(*callback)(void *), uint32_t forMs, void *obj = null) {
-	if(_state != _pressedState && _now - _releasedTS > forMs) {
-		callback(obj);
-		//_releasedTS = _now; // would reset and generate a call for every forMs millis
+void ButtonEvent::onReleasedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null) {
+	if(_state != _pressedState) {
+	  if(_now - _releasedTS > forMs) {
+      if(!actuated) {
+        actuated = true;
+        callback(obj);
+      }
+      return;
+	  }
 	}
+	actuated = false;
 }
