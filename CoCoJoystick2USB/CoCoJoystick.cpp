@@ -8,8 +8,9 @@
 
   // TODO: OINK!
 //#include "SerialPrintCoCoJoystickEvent.h"
-#include "HIDProjectUSBCoCoJoystickEvent.h"
-//#include "USBCoCoJoystickEvent.h"
+//#include "HIDProjectUSBCoCoJoystickEvent.h"
+#include "USBCoCoJoystickEvent.h"
+//#include "SmallUSBCoCoJoystickEvent.h"
 
 #ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long eeprom_crc(int start, int length) {
@@ -64,6 +65,9 @@ CoCoJoystick::CoCoJoystick() {
 #ifdef USBCoCoJoystickEvent_h
   setConfig(new USBCoCoJoystickEvent()); 
 #endif
+#ifdef SmallUSBCoCoJoystickEvent_h
+  setConfig(new SmallUSBCoCoJoystickEvent()); 
+#endif
 }
 
 void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)
@@ -79,8 +83,10 @@ void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinBu
 	_EEPROMOffset = EEPROMOffset;
 
   _axisX.setup(pinAxisX, COCOJOYSTICK_AXIS_TOLERANCE);
+  _axisX.setOutput(_config->getMinAxisX(), _config->getMaxAxisX(), _config->getCenterX());
   _axisY.setup(pinAxisY, COCOJOYSTICK_AXIS_TOLERANCE);
-    
+  _axisY.setOutput(_config->getMinAxisY(), _config->getMaxAxisY(), _config->getCenterY());
+
 #ifdef COCOJOYSTICK_PERSISTENCE
   setEEPROMOffset(EEPROMOffset);
 #endif

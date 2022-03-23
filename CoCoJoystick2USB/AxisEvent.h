@@ -30,7 +30,7 @@ class AxisEvent {
     static const int defaultInputCenterMaximum = (defaultInputMaximum + defaultInputMinimum) / 2 + defaultInputCenterDelta;
     static const int defaultOutputMinimum = -32767; // USB Reference
     static const int defaultOutputCenter = 0;
-    static const int defaultOutputMaximum = 32767;
+    static const int defaultOutputMaximum = 32768;
   
       // Config vars
     int _pin;

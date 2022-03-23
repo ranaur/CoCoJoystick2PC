@@ -7,6 +7,13 @@
 class CoCoJoystickEvent {
   public:
   CoCoJoystickEvent() {};
+
+  int getMinAxisX() { return -32768; };
+  int getCenterX() { return 0; };
+  int getMaxAxisX() { return 32767; };
+  int getMinAxisY() { return -32768; };
+  int getCenterY() { return 0; };
+  int getMaxAxisY() { return 32767; };
   
   virtual void joystickConnected();
   virtual void joystickDisconnected();
