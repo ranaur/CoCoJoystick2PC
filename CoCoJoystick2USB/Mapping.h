@@ -30,6 +30,7 @@ class Mapping
 
     void setInput(mappingData_t newValue) { memmove(&input, &newValue, sizeof(input)); };
     mappingData_t *getInput() { return &input; };
+    int centerValue() { return (input.centerMinimum + input.centerMaximum) / 2; };
     
   	Mapping() {};
     

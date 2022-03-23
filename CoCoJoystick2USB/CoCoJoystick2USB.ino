@@ -46,11 +46,20 @@ void setup() {
 }
 
 #ifdef CALIBRATION
+bool calibrateActuated = false;
+
 void calibrateStart(uint32_t forMs, void *obj) {
 #ifdef DEBUG
   Serial.println("::calibrateStart(...)");
 #endif
   joystick1.startCalibration();
+}
+
+void calibrateReset(void *obj) {
+#ifdef DEBUG
+  Serial.println("::calibrateStart(...)");
+#endif
+  joystick1.resetCalibration();
 }
 #endif
 
@@ -59,6 +68,7 @@ void loop() {
   
 #ifdef CALIBRATION
   calibrateButton.loop(now);
+  calibrateButton.onPressedFor(3000, calibrateReset, calibrateActuated);
   calibrateButton.onPressed(calibrateStart);
 #endif
 
