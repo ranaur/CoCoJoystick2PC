@@ -16,7 +16,7 @@
 #include "AxisEvent.h"
 #include "ButtonEvent.h"
 #include "TimerEvent.h"
-#include "CoCoGamepadConfig.h"
+#include "CoCoJoystickEvent.h"
 #include "CoCoJoystickDetection.h"
 
 class CoCoJoystick
@@ -61,13 +61,13 @@ class CoCoJoystick
     static void changeY(int value, void *obj);
   public:
       // Output
-    CoCoGamepadConfig *_config;
+    CoCoJoystickEvent *_config;
 
   	CoCoJoystick();
   
   	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = 0);
   	void loop(uint32_t now = millis());
-  	void setConfig(CoCoGamepadConfig *config) { _config = config; };
+  	void setConfig(CoCoJoystickEvent *config) { _config = config; };
 
 #ifdef CALIBRATION
       // Calibration process

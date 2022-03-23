@@ -1,12 +1,14 @@
-#ifndef MainAxisUSBGamepadConfig_h
-#define MainAxisUSBGamepadConfig_h
-// Track if any value changed on write?
+#ifndef HIDProjectUSBCoCoJoystickEvent_h
+#define HIDProjectUSBCoCoJoystickEvent_h
+
+// TODO? Track if any value changed on write?
+
 #include "CoCoGamepadConfig.h"
 
 #include <HID-Project.h>
 #include <HID-Settings.h>
 
-class HIDProjectUSBGamepadConfig : public CoCoGamepadConfig {
+class HIDProjectUSBCoCoJoystickEvent : public CoCoJoystickEvent {
   private:
   Gamepad_ *_gamepad;
   int _buttonRed;
@@ -14,7 +16,7 @@ class HIDProjectUSBGamepadConfig : public CoCoGamepadConfig {
   
   public:
 
-  HIDProjectUSBGamepadConfig() {
+  HIDProjectUSBCoCoJoystickEvent() {
     setGamepad(&Gamepad); // XXX allow multiple gamepads!
     setButtonNumbers(1, 2); // make if configurable?
   };

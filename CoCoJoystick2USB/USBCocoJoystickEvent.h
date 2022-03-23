@@ -1,12 +1,16 @@
-#ifndef MainAxisHIDUSBGamepadConfig_h
-#define MainAxisHIDUSBGamepadConfig_h
+#ifndef MainAxisHIDUSBCoCoJoystickEvent_h
+#define MainAxisHIDUSBCoCoJoystickEvent_h
 
   // Show on serial the report data
 #undef DEBUG_REPORT
 
-#define HID_REPORTID 6
+#define DEFAULT_HID_REPORTID 6
 
-#include "CoCoGamepadConfig.h"
+#ifdef DEBUG_REPORT
+#include "util.h"
+#endif
+
+#include "CoCoJoystickEvent.h"
 
 #include "HID.h"
 
@@ -15,7 +19,7 @@ static const uint8_t _hidMultiReportDescriptorCoCoJoystick[] PROGMEM = {
   0x05, 0x01,             /* USAGE_PAGE (Generic Desktop) */
   0x09, 0x04,             /* USAGE (Joystick) */
   0xa1, 0x01,             /* COLLECTION (Application) */
-  0x85, HID_REPORTID,     /*   REPORT_ID  */
+  0x85, DEFAULT_HID_REPORTID,     /*   REPORT_ID  */
   /* 2 Buttons */
   0x05, 0x09,             /*   USAGE_PAGE (Button) */
   0x19, 0x01,             /*   USAGE_MINIMUM (Button 1) */
@@ -55,14 +59,14 @@ typedef struct {
     int16_t yAxis;
 } HID_CoCoJoystickReport_Data_t;
 
-class HIDCoCoJoystickUSBGamepadConfig : public CoCoGamepadConfig {
+class USBCoCoJoystickEvent : public CoCoJoystickEvent {
   private:
   int _buttonRed;
   int _buttonBlack;
   
   public:
 
-  HIDCoCoJoystickUSBGamepadConfig() {
+  USBCoCoJoystickEvent() {
     static HIDSubDescriptor node(_hidMultiReportDescriptorCoCoJoystick, sizeof(_hidMultiReportDescriptorCoCoJoystick));
     HID().AppendDescriptor(&node);
   };
@@ -91,17 +95,14 @@ protected:
 
   virtual inline void SendReport(void* data, int length) { 
 #ifdef DEBUG_REPORT
-      Serial.print("REPORT [");
+      Serial.print("REPORT ");
+      Serial.print(DEFAULT_HID_REPORTID);
+      Serial.print(" [");
       Serial.print(length, HEX);
       Serial.print("]: ");
-      for(int i = 0; i < length; i++) {
-        Serial.print(" ");
-        Serial.print(((uint8_t *)data)[i] < 16 ? "0" : "");
-        Serial.print(((uint8_t *)data)[i], HEX);
-      }
-      Serial.println("");
+      printHex((uint8_t *)data, length, true);
 #endif
-      HID().SendReport(HID_REPORTID, data, length);
+      HID().SendReport(DEFAULT_HID_REPORTID, data, length);
   };
 };
 

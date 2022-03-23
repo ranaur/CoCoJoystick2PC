@@ -1,12 +1,12 @@
-#ifndef CoCoGamepadConfig_h
-#define CoCoGamepadConfig_h
+#ifndef CoCoJoystickEvent_h
+#define CoCoJoystickEvent_h
 
 #include "config.h"
 #include "Arduino.h"
 
-class CoCoGamepadConfig {
+class CoCoJoystickEvent {
   public:
-  CoCoGamepadConfig() {};
+  CoCoJoystickEvent() {};
   
   virtual void joystickConnected();
   virtual void joystickDisconnected();
