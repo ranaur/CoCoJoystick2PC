@@ -15,6 +15,7 @@
 
 #include "AxisEvent.h"
 #include "ButtonEvent.h"
+#include "TimerEvent.h"
 #include "CoCoGamepadConfig.h"
 #include "CoCoJoystickDetection.h"
 
@@ -27,8 +28,10 @@ class CoCoJoystick
     AxisEvent _axisY;
     ButtonEvent _buttonRed;
     ButtonEvent _buttonBlack;
-   
+    
 #ifdef CALIBRATION
+    TimerEvent _calibrationTimeout;
+    
     static const int EEPROM_DataFootprint = sizeof(mappingData_t) * 2; // XXX
     static const int EEPROM_CRCFootprint = sizeof(unsigned long);
     
@@ -49,8 +52,13 @@ class CoCoJoystick
     unsigned long calculateEEPROMCRC();
     void saveCRC();
 #endif
-
+      // Events
     static void pressRed(uint32_t forMs, void *obj);
+    static void pressBlack(uint32_t forMs, void *obj);
+    static void releaseRed(uint32_t forMs, void *obj);
+    static void releaseBlack(uint32_t forMs, void *obj);
+    static void changeX(int value, void *obj);
+    static void changeY(int value, void *obj);
   public:
       // Output
     CoCoGamepadConfig *_config;
@@ -63,10 +71,13 @@ class CoCoJoystick
 
 #ifdef CALIBRATION
       // Calibration process
+    static void calibrationTimeout(void *obj);
     enum STATE state() { return _state; };
     void startCalibration();
     void centerCalibration();
     void endCalibration();
+    void resetCalibration();
+    void cancelCalibration();
 #endif
 
 #ifdef COCOJOYSTICK_PERSISTENCE
