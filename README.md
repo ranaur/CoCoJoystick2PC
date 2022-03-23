@@ -91,9 +91,7 @@ v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 # TODO
 
 ## Next Steps
-* Refactor *GamepadConfig for some better name (CoCoJoystickEventsHandlers?)
-
-* Make JoystickOutput give the minimum/maximum output to the Axis Class
+* Test it on ATTINY85
 
 * Test changing the HID number (did not work) Study single Report and try
 
