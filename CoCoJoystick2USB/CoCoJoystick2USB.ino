@@ -38,9 +38,11 @@ void setup() {
 #endif
 
   joystick1.setup(joystick1PinX, joystick1PinY, joystick1PinBTN_RED, joystick1PinBTN_BLACK, joystick1PinShell, EEPROMOffset);
-
+  
 #ifdef CALIBRATION
+#ifdef DEBUG
   Serial.println("::calibrateButton.setup()");
+#endif
   calibrateButton.setup(calibrateButtonPin);
 #endif
 }
@@ -65,7 +67,7 @@ void calibrateReset(void *obj) {
 
 void loop() {
   uint32_t now = millis();
-  
+
 #ifdef CALIBRATION
   calibrateButton.loop(now);
   calibrateButton.onPressedFor(3000, calibrateReset, calibrateActuated);
