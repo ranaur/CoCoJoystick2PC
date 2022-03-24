@@ -1,4 +1,4 @@
-# CoCoJoystick2USB
+# CoCoJoystick2PC
 
 Make a CoCo (Color Computer) Joystick a USB device (and use in your emulator) with an Arduino Leonardo!
 
@@ -91,6 +91,8 @@ v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 # TODO
 
 ## Next Steps
+* rename to CoCoJoystick2PC
+
 * Test it on ATTINY85
 
 * Test changing the HID number (did not work) Study single Report and try
