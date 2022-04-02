@@ -91,9 +91,10 @@ v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 # TODO
 
 ## Next Steps
-* rename to CoCoJoystick2PC
-
+* Test it on AT Micro Pro Board
+* Test on BAD USB
 * Test it on ATTINY85
+	- Use LUFA to handle USB?
 
 * Test changing the HID number (did not work) Study single Report and try
 

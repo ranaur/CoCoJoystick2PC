@@ -23,7 +23,9 @@ class CoCoJoystick
 {
   private:
       // Sensors
+#ifdef DETECT_JOYSTICK
     CoCoJoystickDetection *detector;
+#endif
     AxisEvent _axisX;
     AxisEvent _axisY;
     ButtonEvent _buttonRed;

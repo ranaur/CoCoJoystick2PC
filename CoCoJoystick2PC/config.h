@@ -12,4 +12,6 @@
 #define DEBUG_MAPPING
 #endif
 
+//#define DETECT_JOYSTICK
+
 #endif

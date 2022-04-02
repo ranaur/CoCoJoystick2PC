@@ -14,9 +14,13 @@
 
 const int joystick1PinX = A0; // brown
 const int joystick1PinY = A1; // red
-const int joystick1PinBTN_RED = 12; // yellow
-const int joystick1PinBTN_BLACK = 11; // blue
+const int joystick1PinBTN_RED = 16; // yellow
+const int joystick1PinBTN_BLACK = 14; // blue
+#ifdef DETECT_JOYSTICK
 const int joystick1PinShell = 10; // mesh / outer shell
+#else
+const int joystick1PinShell = -1;
+#endif
 // green => +5
 // orange => gnd
 

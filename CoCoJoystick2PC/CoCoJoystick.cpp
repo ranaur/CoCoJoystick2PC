@@ -76,9 +76,11 @@ void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinBu
   Serial.println("CoCoJoystick::setup(...)");
 #endif
 
+#ifdef DETECT_JOYSTICK
   //_config->joystickConnected(); // XXX use detection routines
   detector = new CoCoJoystickDetection();
   detector->setup(pinShell);
+#endif
   
 	_EEPROMOffset = EEPROMOffset;
 
@@ -168,8 +170,9 @@ void CoCoJoystick::loop(uint32_t now = millis()) {
   _calibrationTimeout.onTimer(10000, calibrationTimeout, this);
 #endif
 
+#ifdef DETECT_JOYSTICK
   if(! detector->loop(joystickConnected, joystickDisconnected, this) ) return;
-
+#endif
   
 	_buttonRed.loop(now);
 	_buttonRed.onPressed(pressRed, this);
