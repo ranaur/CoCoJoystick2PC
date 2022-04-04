@@ -87,20 +87,24 @@ v0.3 - Now the HID report only what the joystick really have (2 axis and two but
 	Major refactor on calibration
 v0.3.1 - More refactor on calibration. Timeout in 10 sec. Button now resets calibration after 3 secs. Black button cancels calibration.
 v0.4 - General cleanup, speedup, optimizations, specially on calibration.
+v0.5 - First version that handles two joysticks with one board. (if you don't want it, comment #define TWO_JOYSTICK in CoCoJoystick2PC.ino)
 
 # TODO
 
 ## Next Steps
-* Test it on AT Micro Pro Board
 * Test on BAD USB
 * Test it on ATTINY85
 	- Use LUFA to handle USB?
 
-* Test changing the HID number (did not work) Study single Report and try
+* Do it with study single report?
 
 ## Waiting for the new board that works on breadboard
 * Add a repeater on buttons
 	- Add a potentiometer for speed (0-1023 ms) (>1000 => NO REPEAT)
+
+* Create config switches:
+	* Red/Black reports as both buttons (for joysticks that has no secondary button) (3 secs press or when ping 6 is not connected)
+	* Swap vertical axis (CP-400 mode)
 
 * Create Switches: (A)
 	- class SwitchEvent(nBits) {
@@ -115,25 +119,6 @@ v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 		onChange()
 		value()
 	}
-
-* Create config switches:
-	* Red/Black reports as both buttons (for joysticks that has no secondary button) (3 secs press or when ping 6 is not connected)
-	* Swap vertical axis (CP-400 mode)
-
-* Create two buttons (select/start)
-	* Make a switch to answer as different modes: CoCo Mode, NES Mode, Atari Mode, GamepadMode
-1		On change to Gamepad Mode, reset the board
-		* Coco Mode
-			The buttons answer as a keyboard: Y/N, 1/2, R/C 
-		* NES mode
-			The button answer as buttons 3/4, as pushbuttons
-		* Atari Mode
-			The button answer as buttons 3/4, as state buttons
-		* Gamepad Mode
-			Answer as a full Gamepad:
-				Answer the Axis control for analog
-				8 direction DHAT for extremes of the joystick
-				Two joystick buttons as A and B, two extra buttons as X and Y
 
 ## Two Joysticks, one box
 * Allow more than one joystick

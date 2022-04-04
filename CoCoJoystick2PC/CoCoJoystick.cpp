@@ -6,12 +6,6 @@
 
 #define COCOJOYSTICK_AXIS_TOLERANCE 16
 
-  // TODO: OINK!
-//#include "SerialPrintCoCoJoystickEvent.h"
-//#include "HIDProjectUSBCoCoJoystickEvent.h"
-#include "USBCoCoJoystickEvent.h"
-//#include "SmallUSBCoCoJoystickEvent.h"
-
 #ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long eeprom_crc(int start, int length) {
   const unsigned long crc_table[16] = {
@@ -54,20 +48,6 @@ void joystickDisconnected(void *obj) {
 
 CoCoJoystick::CoCoJoystick() {
   setEEPROMOffset(-1);
-
-  // TODO: OINK!
-#ifdef SerialPrintCoCoJoystickEvent_h
-  setConfig(new SerialPrintCoCoJoystickEvent());
-#endif
-#ifdef HIDProjectUSBCoCoJoystickEvent_h
-  setConfig(new HIDProjectUSBCoCoJoystickEvent());
-#endif
-#ifdef USBCoCoJoystickEvent_h
-  setConfig(new USBCoCoJoystickEvent()); 
-#endif
-#ifdef SmallUSBCoCoJoystickEvent_h
-  setConfig(new SmallUSBCoCoJoystickEvent()); 
-#endif
 }
 
 void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)
