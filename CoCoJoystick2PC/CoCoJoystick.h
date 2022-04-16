@@ -9,10 +9,6 @@
 #include "config.h"
 #include "Arduino.h"
 
-#ifdef CALIBRATION
-#define COCOJOYSTICK_PERSISTENCE
-#endif
-
 #include "AxisEvent.h"
 #include "ButtonEvent.h"
 #include "TimerEvent.h"
@@ -31,7 +27,6 @@ class CoCoJoystick
     ButtonEvent _buttonRed;
     ButtonEvent _buttonBlack;
     
-#ifdef CALIBRATION
     TimerEvent _calibrationTimeout;
     
     static const int EEPROM_DataFootprint = sizeof(mappingData_t) * 2; // XXX
@@ -45,15 +40,13 @@ class CoCoJoystick
       CALIBRATING_CENTERS = 2,
     };
     enum STATE _state;
-#endif
 
-#ifdef COCOJOYSTICK_PERSISTENCE
     //static const int EEPROMfootprint = sizeof(int) * 4 * 2 + sizeof(unsigned long);
   
       // save and loading from EEPROM
     unsigned long calculateEEPROMCRC();
     void saveCRC();
-#endif
+
       // Events
     static void pressRed(uint32_t forMs, void *obj);
     static void pressBlack(uint32_t forMs, void *obj);
@@ -61,17 +54,19 @@ class CoCoJoystick
     static void releaseBlack(uint32_t forMs, void *obj);
     static void changeX(int value, void *obj);
     static void changeY(int value, void *obj);
-  public:
+    static void joystickConnected(void *obj);
+    static void joystickDisconnected(void *obj);
+    
       // Output
     CoCoJoystickEvent *_config;
 
+  public:
   	CoCoJoystick();
   
   	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = -1);
   	void loop(uint32_t now = millis());
   	void setConfig(CoCoJoystickEvent *config) { _config = config; };
 
-#ifdef CALIBRATION
       // Calibration process
     static void calibrationTimeout(void *obj);
     enum STATE state() { return _state; };
@@ -80,15 +75,13 @@ class CoCoJoystick
     void endCalibration();
     void resetCalibration();
     void cancelCalibration();
-#endif
 
-#ifdef COCOJOYSTICK_PERSISTENCE
       // save and loading from EEPROM
     void setEEPROMOffset(int EEPROMOffset) { _EEPROMOffset = EEPROMOffset; };
     bool checkCRC();
     void saveCalibration();
     void loadCalibration();
-#endif
+    
 };
 
 #endif

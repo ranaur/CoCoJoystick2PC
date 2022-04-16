@@ -3,7 +3,6 @@
  * Created by Gustavo Schoenaker on 2022
  * 
  * #DFFINES:
- *  CALIBRATION: it will allow calibration routines
  * 
  * FUNCTIONS:
  *  setup() => must be called on setup() function of the main program to configure the axis pin

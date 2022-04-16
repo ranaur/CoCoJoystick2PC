@@ -1,12 +1,9 @@
 #include "CoCoJoystick.h"
 
-#ifdef COCOJOYSTICK_PERSISTENCE
 #include <EEPROM.h>
-#endif
 
 #define COCOJOYSTICK_AXIS_TOLERANCE 16
 
-#ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long eeprom_crc(int start, int length) {
   const unsigned long crc_table[16] = {
     0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
@@ -36,13 +33,12 @@ void printEEPROM(int start, int count) {
   }
   Serial.println("");
 }
-#endif
 
-void joystickConnected(void *obj) {
+static void CoCoJoystick::joystickConnected(void *obj) {
   ((CoCoJoystick *)obj)->_config->joystickConnected();
 }
 
-void joystickDisconnected(void *obj) {
+static void CoCoJoystick::joystickDisconnected(void *obj) {
   ((CoCoJoystick *)obj)->_config->joystickDisconnected();
 }
 
@@ -67,10 +63,9 @@ void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinBu
   _axisY.setup(pinAxisY, COCOJOYSTICK_AXIS_TOLERANCE);
   _axisY.setOutput(_config->getMinAxisY(), _config->getMaxAxisY(), _config->getCenterY());
 
-#ifdef COCOJOYSTICK_PERSISTENCE
   setEEPROMOffset(EEPROMOffset);
-#endif
-
+  debugvar("EEPROMOffset = ", EEPROMOffset); debugln("");
+  
   if(EEPROMOffset != -1) {
     _calibrationTimeout.setup();
     loadCalibration();
@@ -128,7 +123,7 @@ void CoCoJoystick::changeY(int value, void *obj) {
 
 void CoCoJoystick::loop(uint32_t now = millis()) {
   _calibrationTimeout.loop(now);
-  _calibrationTimeout.onTimer(10000, calibrationTimeout, this);
+  _calibrationTimeout.onTimer(60000, calibrationTimeout, this);
 
 #ifdef DETECT_JOYSTICK
   if(! detector->loop(joystickConnected, joystickDisconnected, this) ) return;
@@ -220,7 +215,6 @@ void CoCoJoystick::cancelCalibration() {
 }
 
 
-#ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long CoCoJoystick::calculateEEPROMCRC() {
   if(_EEPROMOffset == -1) { return false; };
   return eeprom_crc(_EEPROMOffset, EEPROM_DataFootprint);
@@ -266,7 +260,7 @@ void CoCoJoystick::loadCalibration() {
   };
 
   if(checkCRC()) {
-    //debugln("Loading calibration from EEPROM");
+    debugln("Loading calibration from EEPROM");
     mappingData_t dataX;
     EEPROM.get(_EEPROMOffset, dataX);
     _axisY.setInput(dataX);
@@ -275,9 +269,8 @@ void CoCoJoystick::loadCalibration() {
     EEPROM.get(_EEPROMOffset + sizeof(mappingData_t), dataY);
     _axisY.setInput(dataY);
   } else {
-//    /debugln("Loading default calibration");
+     debugln("Loading default calibration");
     _axisX.setDefault();
     _axisY.setDefault();
   }
 }
-#endif

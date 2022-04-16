@@ -57,9 +57,7 @@ CoCoJoystick joystick2;
 #endif
 
 void setup() {
-  //debugStart();
-  debugfunction("::setup()");
-
+  
   // TODO: OINK!
 #ifdef SerialPrintCoCoJoystickEvent_h
   joystick1.setConfig(new SerialPrintCoCoJoystickEvent());
@@ -87,13 +85,14 @@ void setup() {
   joystick2.setup(joystick2PinX, joystick2PinY, joystick2PinBTN_RED, joystick2PinBTN_BLACK, joystick2PinShell, EEPROMOffset2);
 #endif
   
-#ifdef CALIBRATION
+  //debugStart();
+  while(!Serial) {}
+  debugfunction("::setup()");
+
   debugfunction("::calibrateButton.setup()");
   calibrateButton.setup(calibrateButtonPin);
-#endif
 }
 
-#ifdef CALIBRATION
 bool calibrateActuated = false;
 
 void calibrateStart(uint32_t forMs, void *obj) {
@@ -108,16 +107,13 @@ void calibrateReset(void *obj) {
   debugln("::calibrateStart(...)");
   joystick1.resetCalibration();
 }
-#endif
 
 void loop() {
   uint32_t now = millis();
 
-#ifdef CALIBRATION
   calibrateButton.loop(now);
-  calibrateButton.onPressedFor(3000, calibrateReset, calibrateActuated);
+  calibrateButton.onPressedFor(10000, calibrateReset, calibrateActuated);
   calibrateButton.onPressed(calibrateStart);
-#endif
 
   joystick1.loop(now);
 #ifdef TWO_JOYSTICKS
