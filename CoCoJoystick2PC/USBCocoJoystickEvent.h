@@ -31,7 +31,7 @@ static const uint8_t _hidMultiReportDescriptorCoCoJoystick[] PROGMEM = {
   0x81, 0x02,             /*   INPUT (Data,Var,Abs) */
   0x95, 0x06,             /*   REPORT_COUNT (6) PADDING */
   0x81, 0x03,             /*   INPUT (Constant,Var,Abs) */
-  /* 4 16bit Axis */
+  /* 2 16bit Axis */
   0x05, 0x01,             /*   USAGE_PAGE (Generic Desktop) */
   0xa1, 0x00,             /*   COLLECTION (Physical) */
   0x09, 0x30,             /*     USAGE (X) */

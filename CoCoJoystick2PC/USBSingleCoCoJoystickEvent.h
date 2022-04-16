@@ -1,25 +1,16 @@
-#ifndef USBCoCo2JoystickEvent_h
-#define USBCoCo2JoystickEvent_h
+#ifndef USBSingleCoCoJoystickEvent_h
+#define USBSingleCoCoJoystickEvent_h
 
-  // Show on serial the report data
-#undef DEBUG_REPORT
-
-#define HID_REPORTID 5
-
-#ifdef DEBUG_REPORT
-#include "util.h"
-#endif
-
-#include "CoCoJoystickEvent.h"
-
+#include <Arduino.h>
 #include "HID.h"
+#include "CoCoJoystickEvent.h"
+#define EPTYPE_DESCRIPTOR_SIZE      uint8_t
 
-static const uint8_t _hidMultiReportDescriptorCoCo2Joystick[] PROGMEM = {
+static const uint8_t _hidMultiReportDescriptorUSBSingleCoCoJoystick[] PROGMEM = {
   /* Gamepad with 2 buttons and 6 axis*/
   0x05, 0x01,             /* USAGE_PAGE (Generic Desktop) */
   0x09, 0x04,             /* USAGE (Joystick) */
   0xa1, 0x01,             /* COLLECTION (Application) */
-  0x85, HID_REPORTID,     /*   REPORT_ID  */
   /* 2 Buttons */
   0x05, 0x09,             /*   USAGE_PAGE (Button) */
   0x19, 0x01,             /*   USAGE_MINIMUM (Button 1) */
@@ -57,19 +48,20 @@ typedef struct {
 
     int16_t xAxis;
     int16_t yAxis;
-} HID_CoCo2JoystickReport_Data_t;
+} HID_CoCoJoystickReport_Data_t;
 
-class USBCoCo2JoystickEvent : public CoCoJoystickEvent {
+class USBSingleCoCoJoystickEvent : public CoCoJoystickEvent, public PluggableUSBModule {
+  public:
+  
+  USBSingleCoCoJoystickEvent() : PluggableUSBModule(1, 1, epType), protocol(HID_REPORT_PROTOCOL), idle(1) {
+    epType[0] = EP_TYPE_INTERRUPT_IN;
+    PluggableUSB().plug(this);
+  }
+
   private:
   int _buttonRed;
   int _buttonBlack;
-  
-  public:
-
-  USBCoCo2JoystickEvent() {
-    static HIDSubDescriptor node(_hidMultiReportDescriptorCoCo2Joystick, sizeof(_hidMultiReportDescriptorCoCo2Joystick));
-    HID().AppendDescriptor(&node);
-  };
+  inline void releaseAll(void) { memset(&_report, 0x00, sizeof(_report)); };
   
   void setButtonNumbers(int buttonRed, int buttonBlack ) {
     _buttonRed = buttonRed;
@@ -88,22 +80,18 @@ class USBCoCo2JoystickEvent : public CoCoJoystickEvent {
 
   void commit() { SendReport(&_report, sizeof(_report)); }
 
-protected: 
-  inline void releaseAll(void) { memset(&_report, 0x00, sizeof(_report)); };
+  private:
+  HID_CoCoJoystickReport_Data_t _report;
 
-  HID_CoCo2JoystickReport_Data_t _report;
+  protected: /* for PluggableUSBModule */
+    EPTYPE_DESCRIPTOR_SIZE epType[1];
+    uint8_t protocol;
+    uint8_t idle;
 
-  virtual inline void SendReport(void* data, int length) { 
-#ifdef DEBUG_REPORT
-      Serial.print("REPORT ");
-      Serial.print(HID_REPORTID);
-      Serial.print(" [");
-      Serial.print(length, HEX);
-      Serial.print("]: ");
-      printHex((uint8_t *)data, length, true);
-#endif
-      HID().SendReport(HID_REPORTID, data, length);
-  };
+    int getInterface(uint8_t* interfaceCount);
+    int getDescriptor(USBSetup& setup);
+    bool setup(USBSetup& setup);
+    
+    virtual void SendReport(void* data, int length);
 };
-
 #endif

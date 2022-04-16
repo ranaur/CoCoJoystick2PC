@@ -96,11 +96,10 @@ v0.5 - First version that handles two joysticks with one board. (if you don't wa
 * Test it on ATTINY85
 	- Use LUFA to handle USB?
 
-* Do it with study single report?
-
 ## Waiting for the new board that works on breadboard
 * Add a repeater on buttons
 	- Add a potentiometer for speed (0-1023 ms) (>1000 => NO REPEAT)
+	- Do it on buttons due lack of analog input: press button for repeat "save". Test average/minimum between presses. Long press cancel.
 
 * Create config switches:
 	* Red/Black reports as both buttons (for joysticks that has no secondary button) (3 secs press or when ping 6 is not connected)
@@ -165,3 +164,8 @@ A2 - Axis X (2nd)
 A3 - Axis Y (2nd)
 A4 - Turbo mode (potentiometer)
 A5 - Free
+
+# Sites
+
+PluggableUSB and PluggableHID howto - arduino/Arduino Wiki
+https://github-wiki-see.page/m/arduino/Arduino/wiki/PluggableUSB-and-PluggableHID-howto

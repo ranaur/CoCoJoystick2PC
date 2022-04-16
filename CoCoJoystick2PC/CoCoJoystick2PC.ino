@@ -24,8 +24,9 @@ const int EEPROMOffset = 0;
   // TODO: OINK!
 //#include "SerialPrintCoCoJoystickEvent.h"
 //#include "HIDProjectUSBCoCoJoystickEvent.h"
-#include "USBCoCoJoystickEvent.h"
+//#include "USBCoCoJoystickEvent.h"
 //#include "SmallUSBCoCoJoystickEvent.h"
+#include "USBSingleCoCoJoystickEvent.h"
 
 
 const int joystick1PinX = A0; // brown
@@ -81,11 +82,16 @@ void setup() {
 #ifdef SmallUSBCoCoJoystickEvent_h
   joystick1.setConfig(new SmallUSBCoCoJoystickEvent()); 
 #endif
+#ifdef USBSingleCoCoJoystickEvent_h
+  joystick1.setConfig(new USBSingleCoCoJoystickEvent()); 
+#endif
+
   joystick1.setup(joystick1PinX, joystick1PinY, joystick1PinBTN_RED, joystick1PinBTN_BLACK, joystick1PinShell, EEPROMOffset);
 
 #ifdef TWO_JOYSTICKS
-  joystick2.setConfig(new USBCoCo2JoystickEvent()); 
+  //joystick2.setConfig(new USBCoCo2JoystickEvent()); 
   //joystick2.setConfig(new SerialPrintCoCoJoystickEvent()); 
+  joystick2.setConfig(new USBSingleCoCoJoystickEvent()); 
   
   joystick2.setup(joystick2PinX, joystick2PinY, joystick2PinBTN_RED, joystick2PinBTN_BLACK, joystick2PinShell, EEPROMOffset2);
 #endif
