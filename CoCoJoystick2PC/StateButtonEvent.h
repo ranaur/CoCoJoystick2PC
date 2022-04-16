@@ -22,7 +22,7 @@ class StateButtonEvent : public ButtonEvent {
     //void load();
     void reset() { setState(_defaultState); }
     
-    void setState(state_t state) { if(_state != state % _numberOfStates) { _state = state % _numberOfStates; changed = true; } }
+    void setState(state_t state) { if(_state != state % _numberOfStates) { _state = state % _numberOfStates; _changed = true; } }
     state_t getState() { return _state; }
     void skipState(state_t nJumps = 1) { setState(getState() + nJumps); }
     void nextState() { skipState(1); }
@@ -32,7 +32,7 @@ class StateButtonEvent : public ButtonEvent {
     state_t _state;
     state_t _defaultState;
     state_t _numberOfStates;
-    bool changed;
+    bool _changed;
     //int _EEPROMAdress;
 
     static void onButtonPressCallback(uint32_t dummy, void *obj);

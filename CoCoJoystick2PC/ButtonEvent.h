@@ -21,7 +21,7 @@ class ButtonEvent {
 		void onReleasedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null);
 		
 		void printState();
-	private:
+	protected:
 		void printVar(char *name, uint32_t var);
 			// Config vars
 		int _pin;

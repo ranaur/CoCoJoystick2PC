@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define TWO_JOYSTICKS
+#define ENABLE_INVERT_JOYSTICKS
 #define DEBUG
 
 #ifdef DEBUG

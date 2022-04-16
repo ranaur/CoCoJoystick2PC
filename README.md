@@ -49,7 +49,7 @@ CoCoGamepadConfig.h => Abstract class that represents the interface of the event
 
 ## Calibrate button
 * If pressed, start calibration process. See "Calibration Process".
-* If pressed for 3 seconds, reset the calibration to defaults.
+* If pressed for 10 seconds, reset the calibration to defaults.
 
 ## Calibration process
 
@@ -59,7 +59,7 @@ CoCoGamepadConfig.h => Abstract class that represents the interface of the event
 * Leave the joystick at the center or move very slightly (move the base of the joystick, not the stick), just to make the stick oscillate the center.
 * Press the red button again
 * At any moment pressing the black button cancel the calibration.
-* If you stay more than 10 seconds and do not press the red button, the calibration cancels (timeout).
+* If you stay more than 60 seconds and do not press the red button, the calibration cancels (timeout).
 
 ## Useful tips
 
@@ -126,13 +126,15 @@ v0.5 - First version that handles two joysticks with one board. (if you don't wa
 	* Make it Double: answer as two joysticks if just one joystick is connected
 		(if detection is ok, answer always as two: if only one is connected, set the output to both.)
 	* Create Buttons/Switch config
-		* Swap joysticks left/right
+OK		* Swap joysticks left/right
 		* When just 1 joystick is connected: Answer as both joysticks
 
 ## Cosmetic changes
 * Change the Joystick name from "Arduino Leonardo" to "CoCo Joystick(s)"
 	- need to burn a new bootloader?
 	- if so, disable "Leonardo" Serial Port
+
+## Make a board to solder
 
 ## For future/next project
 * Make it Bluetooth

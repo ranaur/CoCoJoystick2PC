@@ -12,6 +12,7 @@
 
 #include "CoCoJoystick.h"
 #include "ButtonEvent.h"
+#include "StateButtonEvent.h"
 
 const int calibrateButtonPin = 8;
 const int calibrateLedPin = LED_BUILTIN;
@@ -54,7 +55,14 @@ const int joystick2PinShell = -1;
 const int EEPROMOffset2 = 200;
 #endif
 CoCoJoystick joystick2;
+
+#ifdef ENABLE_INVERT_JOYSTICKS
+const int invertJoysticksPin = 9;
+StateButtonEvent invertJoystickButton(2);
 #endif
+
+#endif
+
 
 void setup() {
   
@@ -84,19 +92,22 @@ void setup() {
   
   joystick2.setup(joystick2PinX, joystick2PinY, joystick2PinBTN_RED, joystick2PinBTN_BLACK, joystick2PinShell, EEPROMOffset2);
 #endif
-  
+
   //debugStart();
   while(!Serial) {}
   debugfunction("::setup()");
 
   debugfunction("::calibrateButton.setup()");
   calibrateButton.setup(calibrateButtonPin);
+#ifdef ENABLE_INVERT_JOYSTICKS
+  invertJoystickButton.setup(invertJoysticksPin);
+#endif
 }
 
 bool calibrateActuated = false;
 
 void calibrateStart(uint32_t forMs, void *obj) {
-  debugln("::calibrateStart(...)");
+  debugfunction("::calibrateStart(...)");
   joystick1.startCalibration();
 #ifdef TWO_JOYSTICKS
   joystick2.startCalibration();
@@ -104,9 +115,20 @@ void calibrateStart(uint32_t forMs, void *obj) {
 }
 
 void calibrateReset(void *obj) {
-  debugln("::calibrateStart(...)");
+  debugfunction("::calibrateReset(...)");
   joystick1.resetCalibration();
 }
+
+#ifdef ENABLE_INVERT_JOYSTICKS
+void invertJoysticks(state_t state, void *obj) {
+  debugfunction("::invertJoysticks(...)");
+  CoCoJoystickEvent *temp;
+  temp = joystick1.getConfig();
+  joystick1.setConfig(joystick2.getConfig());
+  joystick2.setConfig(temp);
+  debugln("invertJoysticks(...)");
+}
+#endif
 
 void loop() {
   uint32_t now = millis();
@@ -114,6 +136,11 @@ void loop() {
   calibrateButton.loop(now);
   calibrateButton.onPressedFor(10000, calibrateReset, calibrateActuated);
   calibrateButton.onPressed(calibrateStart);
+
+#ifdef ENABLE_INVERT_JOYSTICKS
+  invertJoystickButton.loop(now);
+  invertJoystickButton.onStateChange(invertJoysticks);
+#endif
 
   joystick1.loop(now);
 #ifdef TWO_JOYSTICKS
