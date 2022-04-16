@@ -1,0 +1,3 @@
+[submodule "Test/ProMicroKiCad"]
+	path = Test/ProMicroKiCad
+	url = https://github.com/Biacco42/ProMicroKiCad.git
