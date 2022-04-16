@@ -18,30 +18,22 @@ class TimerEvent {
   public:
     TimerEvent() {};
     void setup() { 
-      #ifdef DEBUG
-      Serial.println("TimerEvent::setup()"); 
-      #endif
+      debugfunction("TimerEvent::setup()"); 
       restart();
       disable();
     };
 
     void disable() {
-      #ifdef DEBUG
-      Serial.println("TimerEvent::disable()"); 
-      #endif
+      debugfunction("TimerEvent::disable()"); 
       _enabled = false;
     };
     void enable() {
-      #ifdef DEBUG
-      Serial.println("TimerEvent::enable()");
-      #endif
+      debugfunction("TimerEvent::enable()");
       _enabled = true;
     };
     
     void restart(uint32_t now = millis()) {
-      #ifdef DEBUG
-      Serial.println("TimerEvent::restart()");
-      #endif
+      debugfunction("TimerEvent::restart()");
       _startTime = now;
       _actuated = false;
       enable();

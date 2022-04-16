@@ -3,7 +3,6 @@
  * Created by Gustavo Schoenaker on 2022
  *     
  * #DEFINES:
- *  DEBUG_MAPPING: show verbose results on serial port
  *
  */
 #ifndef Mapping_h

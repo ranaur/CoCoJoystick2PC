@@ -4,7 +4,6 @@
  * 
  * #DFFINES:
  *  CALIBRATION: it will allow calibration routines
- *  DEBUG_AXISEVENT: show verbose results on serial port
  * 
  * FUNCTIONS:
  *  setup() => must be called on setup() function of the main program to configure the axis pin
@@ -58,7 +57,6 @@ class AxisEvent {
   protected:
 
   public:
-#ifdef CALIBRATION
     static const int EEPROMSize = sizeof(int) * 4;
     void setEEPROMOffset(int EEPROMOffset);
     void startCalibration();
@@ -68,9 +66,7 @@ class AxisEvent {
     void resetCalibration();
     void cancelCalibration();
     int centerValue() { return mapping.centerValue(); };
-#endif
 
-#ifdef CALIBRATION
     int _EEPROMOffset;
     mappingData_t tempCalibration;
 
@@ -79,7 +75,6 @@ class AxisEvent {
       CALIBRATING_EDGES = 1,
       CALIBRATING_CENTERS = 2,
     } _state;
-#endif
 };
 
 #endif

@@ -1,14 +1,10 @@
 #include "AxisEvent.h"
 
-#ifdef CALIBRATION
 #include <EEPROM.h>
-#endif
 
 AxisEvent::AxisEvent() {
   _pin = -1;
-#ifdef CALIBRATION
   _state = OPERATING;
-#endif
 }
 
 void AxisEvent::setup(int pin, int tolerance = 0) {
@@ -39,7 +35,6 @@ void AxisEvent::onChanged(void(*callback)(int, void *), void *obj = (void *)0, u
 
   int rawValue = analogRead(_pin);
 
-#ifdef CALIBRATION
   if(_state == STATE::CALIBRATING_EDGES) {
     tempCalibration.edgeMinimum = min(tempCalibration.edgeMinimum, rawValue);
     tempCalibration.edgeMaximum = max(tempCalibration.edgeMaximum, rawValue);
@@ -49,15 +44,12 @@ void AxisEvent::onChanged(void(*callback)(int, void *), void *obj = (void *)0, u
     tempCalibration.centerMinimum = min(tempCalibration.centerMinimum, rawValue);
     tempCalibration.centerMaximum = max(tempCalibration.centerMaximum, rawValue);
   }
-#endif
 
   if(_lastValue - rawValue > _tolerance || rawValue - _lastValue > _tolerance) {
     _lastValue = rawValue;
     callback(value(), obj); 
   }
 }
-
-#ifdef CALIBRATION
 
 void AxisEvent::startCalibration() {
   _state = STATE::CALIBRATING_EDGES;
@@ -91,4 +83,3 @@ void AxisEvent::resetCalibration() {
 void AxisEvent::printCalibration() {
   mapping.print();
 }
-#endif

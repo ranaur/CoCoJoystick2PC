@@ -14,17 +14,17 @@ typedef unsigned int state_t;
 
 class StateButtonEvent : public ButtonEvent {
   public:
-    StateButtonEvent (state_t numberOfStates, state_t defaultState = 0);
+    StateButtonEvent(state_t numberOfStates, state_t defaultState = 0);
     //void setEEPROMAddress(int address) { _EEPROMAdress = address };
     void onStateChange(void(*callback)(state_t, void *), void *obj = null);
     
     //void save();
     //void load();
-    void reset(); { setState(_defaultState); }
+    void reset() { setState(_defaultState); }
     
-    void setState(state_t state) { if(_state != state % _numberOfStates) { _state = state % _numberOfStates; changed = true; }
+    void setState(state_t state) { if(_state != state % _numberOfStates) { _state = state % _numberOfStates; changed = true; } }
     state_t getState() { return _state; }
-    void skipState(state_t nJumps = 1) { setState(getState + nJumps); }
+    void skipState(state_t nJumps = 1) { setState(getState() + nJumps); }
     void nextState() { skipState(1); }
 
   private:
@@ -35,7 +35,7 @@ class StateButtonEvent : public ButtonEvent {
     bool changed;
     //int _EEPROMAdress;
 
-    static onButtonPressCallback(uint32_t dummy, void *obj);
+    static void onButtonPressCallback(uint32_t dummy, void *obj);
 };
 
 #endif

@@ -34,7 +34,7 @@ void printEEPROM(int start, int count) {
     Serial.print(EEPROM[n], HEX);
     Serial.print(" ");
   }
-  Serial.println();
+  Serial.println("");
 }
 #endif
 
@@ -50,11 +50,9 @@ CoCoJoystick::CoCoJoystick() {
   setEEPROMOffset(-1);
 }
 
-void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset)
+void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = -1)
 {
-#ifdef DEBUG
-  Serial.println("CoCoJoystick::setup(...)");
-#endif
+  debugfunction("CoCoJoystick::setup(...)");
 
 #ifdef DETECT_JOYSTICK
   //_config->joystickConnected(); // XXX use detection routines
@@ -73,82 +71,64 @@ void CoCoJoystick::setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinBu
   setEEPROMOffset(EEPROMOffset);
 #endif
 
-#ifdef CALIBRATION
-  _calibrationTimeout.setup();
-  loadCalibration();
-#else
-  _axisX.setDefault();
-  _axisY.setDefault();
-#endif  
+  if(EEPROMOffset != -1) {
+    _calibrationTimeout.setup();
+    loadCalibration();
+  } else {
+    _axisX.setDefault();
+    _axisY.setDefault();
+  }
 
 	_buttonRed.setup(pinButtonRed);
 	_buttonBlack.setup(pinButtonBlack);
 }
 
 static void CoCoJoystick::pressRed(uint32_t forMs, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::pressRed(...)");
-#endif
+  debugfunction("CoCoJoystick::pressRed(...)");
 
-#ifdef CALIBRATION
   if(((CoCoJoystick *)obj)->state() == CoCoJoystick::STATE::CALIBRATING_CENTERS && forMs > 500) {
     ((CoCoJoystick *)obj)->endCalibration();
   }
   if(((CoCoJoystick *)obj)->state() == CoCoJoystick::STATE::CALIBRATING_EDGES && forMs > 500) {
     ((CoCoJoystick *)obj)->centerCalibration();
   }
-#endif
 
   ((CoCoJoystick *)obj)->_config->btnRedPress();
 }
 
 void CoCoJoystick::pressBlack(uint32_t forMs, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::pressBlack(...)");
-#endif
+  debugfunction("CoCoJoystick::pressBlack(...)");
 
-#ifdef CALIBRATION
   if((((CoCoJoystick *)obj)->state() == CoCoJoystick::STATE::CALIBRATING_CENTERS || ((CoCoJoystick *)obj)->state() == CoCoJoystick::STATE::CALIBRATING_EDGES) && forMs > 500) {
     ((CoCoJoystick *)obj)->cancelCalibration();
   }
-#endif
   
   ((CoCoJoystick *)obj)->_config->btnBlackPress();
 }
 
 void CoCoJoystick::releaseRed(uint32_t forMs, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::releaseRed(...)");
-#endif
+  debugfunction("CoCoJoystick::releaseRed(...)");
   ((CoCoJoystick *)obj)->_config->btnRedRelease();
 }
 
 void CoCoJoystick::releaseBlack(uint32_t forMs, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::releaseBlack(...)");
-#endif
+  debugfunction("CoCoJoystick::releaseBlack(...)");
   ((CoCoJoystick *)obj)->_config->btnBlackRelease();
 }
 
 void CoCoJoystick::changeX(int value, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::changeX(...)");
-#endif
+  debugfunction("CoCoJoystick::changeX(...)");
   ((CoCoJoystick *)obj)->_config->axisXchange(value);
 }
 
 void CoCoJoystick::changeY(int value, void *obj) {
-#ifdef DEBUG_EVENT
-  Serial.println("CoCoJoystick::changeY(...)");
-#endif
+  debugfunction("CoCoJoystick::changeY(...)");
   ((CoCoJoystick *)obj)->_config->axisYchange(value);
 }
 
 void CoCoJoystick::loop(uint32_t now = millis()) {
-#ifdef CALIBRATION
   _calibrationTimeout.loop(now);
   _calibrationTimeout.onTimer(10000, calibrationTimeout, this);
-#endif
 
 #ifdef DETECT_JOYSTICK
   if(! detector->loop(joystickConnected, joystickDisconnected, this) ) return;
@@ -170,15 +150,11 @@ void CoCoJoystick::loop(uint32_t now = millis()) {
   // implementar calibragem _calibrateButton.onRelease(..., 3000);
 }
 
-#ifdef CALIBRATION
 void CoCoJoystick::calibrationTimeout(void *obj) {
   ((CoCoJoystick *)obj)->cancelCalibration();
 
-#ifdef DEBUG_EVENT
-  Serial.println("CALIBRATION TIMEOUT");
-#endif
+  debugln("CALIBRATION TIMEOUT");
 }
-
 
 void CoCoJoystick::startCalibration() {
   _state = STATE::CALIBRATING_EDGES;
@@ -186,10 +162,8 @@ void CoCoJoystick::startCalibration() {
   _axisY.startCalibration();
   _calibrationTimeout.restart();
 
-#ifdef DEBUG
-  Serial.println("BEGIN CALIBRATION ROUTINE.");
-  Serial.println("Move joystick to maximum points and press the Red Button.");
-#endif
+  debugln("BEGIN CALIBRATION ROUTINE.");
+  debugln("Move joystick to maximum points and press the Red Button.");
 }
 
 void CoCoJoystick::centerCalibration() {
@@ -197,10 +171,9 @@ void CoCoJoystick::centerCalibration() {
   _axisX.centerCalibration();
   _axisY.centerCalibration();
   _calibrationTimeout.restart();
-#ifdef DEBUG
-  Serial.println("CALIBRATE CENTER ROUTINE.");
-  Serial.println("Set joystick to center point and press the Red Button.");
-#endif
+
+  debugln("CALIBRATE CENTER ROUTINE.");
+  debugln("Set joystick to center point and press the Red Button.");
 }
 
 void CoCoJoystick::endCalibration() {
@@ -215,9 +188,7 @@ void CoCoJoystick::endCalibration() {
   changeX(_axisX.value(), this);
   changeY(_axisY.value(), this);
   
-#ifdef DEBUG
-  Serial.println("CALIBRATION ROUTINE ENDED.");
-#endif
+  debugln("CALIBRATION ROUTINE ENDED.");
 }
 
 void CoCoJoystick::resetCalibration() {
@@ -232,9 +203,7 @@ void CoCoJoystick::resetCalibration() {
   changeX(_axisX.value(), this);
   changeY(_axisY.value(), this);
 
-#ifdef DEBUG
-  Serial.println("CALIBRATION RESET.");
-#endif
+  debugln("CALIBRATION RESET.");
 }
 
 void CoCoJoystick::cancelCalibration() {
@@ -247,11 +216,9 @@ void CoCoJoystick::cancelCalibration() {
   changeX(_axisX.value(), this);
   changeY(_axisY.value(), this);
 
-#ifdef DEBUG
-  Serial.println("CALIBRATION CANCELED.");
-#endif
+  debugln("CALIBRATION CANCELED.");
 }
-#endif
+
 
 #ifdef COCOJOYSTICK_PERSISTENCE
 unsigned long CoCoJoystick::calculateEEPROMCRC() {
@@ -278,41 +245,28 @@ bool CoCoJoystick::checkCRC() {
 }
 
 void CoCoJoystick::saveCalibration() {
-#ifdef DEBUG
-    Serial.println("CoCoJoystick::saveCalibration()");
-#endif
+  debugfunction("CoCoJoystick::saveCalibration()");
   if(_EEPROMOffset == -1) { return; };
 
   EEPROM.put(_EEPROMOffset, *_axisX.getInput());
   EEPROM.put(_EEPROMOffset + sizeof(mappingData_t), *_axisY.getInput());
 
   saveCRC();
-#ifdef DEBUG
-  Serial.print("Axis X: ");
-  _axisX.printCalibration();
-  Serial.print("Axis Y: ");
-  _axisY.printCalibration();
-#endif
+  
   loadCalibration(); // just to be sure
 }
 
 void CoCoJoystick::loadCalibration() {
-#ifdef DEBUG
-    Serial.println("CoCoJoystick::loadCalibration()");
-#endif
+  debugfunction("CoCoJoystick::loadCalibration()");
   if(_EEPROMOffset == -1) { 
-#ifdef DEBUG
-    Serial.println("EEPROM Offset not set");
-#endif
+    debugln("EEPROM Offset not set");
     _axisX.setDefault();
     _axisY.setDefault();
     return;
   };
 
   if(checkCRC()) {
-#ifdef DEBUG
-    Serial.println("Loading calibration from EEPROM");
-#endif
+    //debugln("Loading calibration from EEPROM");
     mappingData_t dataX;
     EEPROM.get(_EEPROMOffset, dataX);
     _axisY.setInput(dataX);
@@ -321,18 +275,9 @@ void CoCoJoystick::loadCalibration() {
     EEPROM.get(_EEPROMOffset + sizeof(mappingData_t), dataY);
     _axisY.setInput(dataY);
   } else {
-#ifdef DEBUG
-    Serial.println("Loading default calibration");
-#endif
+//    /debugln("Loading default calibration");
     _axisX.setDefault();
     _axisY.setDefault();
   }
-
-#ifdef DEBUG
-  Serial.print("Axis X: ");
-  _axisX.printCalibration();
-  Serial.print("Axis Y: ");
-  _axisY.printCalibration();
-#endif
 }
 #endif

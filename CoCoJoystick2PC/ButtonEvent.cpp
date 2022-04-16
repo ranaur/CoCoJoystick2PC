@@ -1,41 +1,36 @@
+#include "config.h"
 #include "ButtonEvent.h"
 
 ButtonEvent::ButtonEvent() {
 	_pin = -1;
 }
 
-void ButtonEvent::printVar(char *name, uint32_t var) {
-	Serial.print(name);
-	Serial.print(" = ");
-	Serial.print(var);
-}
-
 void ButtonEvent::printState() {
-	Serial.println("ButtonEvent:");
+	debugln("ButtonEvent:");
 	
-	Serial.print("    Config:");
-	printVar("  _pin", _pin );
-	printVar("  _pressedState", _pressedState );
-	printVar("  _pullup", _pullup );
-  Serial.println("");
+	debug("    Config:");
+	debugvar("  _pin = ", _pin );
+	debugvar("  _pressedState = ", _pressedState );
+	debugvar("  _pullup = ", _pullup );
+  debugln("");
 	
-	Serial.print("    Debounce:");
-	printVar("  _lastDebounceState", _lastDebounceState );
-	printVar("  _debounceTS", _debounceTS );
-	printVar("  (diff)", _now - _debounceTS );
-	printVar("  debounceDelay", debounceDelay );
-	Serial.println("");
+	debug("    Debounce:");
+	debugvar("  _lastDebounceState = ", _lastDebounceState );
+	debugvar("  _debounceTS = ", _debounceTS );
+	debugvar("  (diff) = ", _now - _debounceTS );
+	debugvar("  debounceDelay = ", debounceDelay );
+  debugln("");
 
-	Serial.print("    Press/Release:");
-	printVar("  _pressedTS", _pressedTS );
-	printVar("  _releasedTS", _releasedTS );
-	printVar("  _lastStableState", _lastStableState );
-	Serial.println("");
+	debug("    Press/Release:");
+	debugvar("  _pressedTS = ", _pressedTS );
+	debugvar("  _releasedTS = ", _releasedTS );
+	debugvar("  _lastStableState = ", _lastStableState );
+  debugln("");
 
-	Serial.print("    Transient:");
-	printVar("  _now", _now );
-	printVar("  _state", _state );
-	Serial.println("");
+	debug("    Transient:");
+	debugvar("  _now = ", _now );
+	debugvar("  _state = ", _state );
+  debugln("");
 }
 
 void ButtonEvent::setup(int pin, bool pullup = true, int pressedState = LOW) {

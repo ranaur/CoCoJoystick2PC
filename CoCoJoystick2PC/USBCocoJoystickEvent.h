@@ -94,14 +94,16 @@ protected:
   HID_CoCoJoystickReport_Data_t _report;
 
   virtual inline void SendReport(void* data, int length) { 
-#ifdef DEBUG_REPORT
+      #ifdef DEBUG_REPORT
       Serial.print("REPORT ");
       Serial.print(DEFAULT_HID_REPORTID);
       Serial.print(" [");
       Serial.print(length, HEX);
       Serial.print("]: ");
+      
       printHex((uint8_t *)data, length, true);
-#endif
+      #endif
+
       HID().SendReport(DEFAULT_HID_REPORTID, data, length);
   };
 };

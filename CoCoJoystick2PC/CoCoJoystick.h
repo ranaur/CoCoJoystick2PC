@@ -67,7 +67,7 @@ class CoCoJoystick
 
   	CoCoJoystick();
   
-  	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = 0);
+  	void setup(int pinAxisX, int pinAxisY, int pinButtonRed, int pinButtonBlack, int pinShell, int EEPROMOffset = -1);
   	void loop(uint32_t now = millis());
   	void setConfig(CoCoJoystickEvent *config) { _config = config; };
 
