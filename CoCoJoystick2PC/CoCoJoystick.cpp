@@ -151,12 +151,15 @@ void CoCoJoystick::calibrationTimeout(void *obj) {
   debugln("CALIBRATION TIMEOUT");
 }
 
-void CoCoJoystick::startCalibration() {
+void CoCoJoystick::startCalibration(void(*centerCallback)(CoCoJoystick *) = null, void(*finishCallback)(CoCoJoystick *) = null) {
+  _centerCallback = centerCallback;
+  _finishCallback = finishCallback;
   _state = STATE::CALIBRATING_EDGES;
   _axisX.startCalibration();
   _axisY.startCalibration();
   _calibrationTimeout.restart();
 
+  delay(100);
   debugln("BEGIN CALIBRATION ROUTINE.");
   debugln("Move joystick to maximum points and press the Red Button.");
 }
@@ -167,6 +170,8 @@ void CoCoJoystick::centerCalibration() {
   _axisY.centerCalibration();
   _calibrationTimeout.restart();
 
+  delay(100);
+  if(_centerCallback) _centerCallback(this); else Serial.println("NO CALLBACK for CANCEL");
   debugln("CALIBRATE CENTER ROUTINE.");
   debugln("Set joystick to center point and press the Red Button.");
 }
@@ -183,6 +188,8 @@ void CoCoJoystick::endCalibration() {
   changeX(_axisX.value(), this);
   changeY(_axisY.value(), this);
   
+  delay(100);
+  if(_finishCallback) _finishCallback(this);
   debugln("CALIBRATION ROUTINE ENDED.");
 }
 
@@ -211,6 +218,7 @@ void CoCoJoystick::cancelCalibration() {
   changeX(_axisX.value(), this);
   changeY(_axisY.value(), this);
 
+  if(_finishCallback) _finishCallback(this);
   debugln("CALIBRATION CANCELED.");
 }
 

@@ -6,6 +6,8 @@
 #ifndef CoCoJoystick_h
 #define CoCoJoystick_h
 
+#undef DEBUG
+
 #include "config.h"
 #include "Arduino.h"
 
@@ -59,7 +61,8 @@ class CoCoJoystick
     
       // Output
     CoCoJoystickEvent *_config;
-
+    void(*_centerCallback)(CoCoJoystick *);
+    void(*_finishCallback)(CoCoJoystick *);
   public:
   	CoCoJoystick();
   
@@ -71,7 +74,7 @@ class CoCoJoystick
       // Calibration process
     static void calibrationTimeout(void *obj);
     enum STATE state() { return _state; };
-    void startCalibration();
+    void startCalibration(void(*centerCallback)(CoCoJoystick *) = null, void(*finishCallback)(CoCoJoystick *) = null);
     void centerCalibration();
     void endCalibration();
     void resetCalibration();
