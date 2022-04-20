@@ -114,6 +114,7 @@ void setup() {
 #endif
 
   debugStart();
+
 #if CALIBRATE == 1
   calibrateButton.setup(joystick1PinBTN_RED);
   led.play(shortBliks);
