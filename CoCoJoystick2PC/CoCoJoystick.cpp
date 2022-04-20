@@ -141,8 +141,6 @@ void CoCoJoystick::loop(uint32_t now = millis()) {
   _axisY.onChanged(changeY, this, now);
 
   _config->commit();
-  // implementar inversão de joysticks/modo _calibrateButton.onRelease(..., 0);
-  // implementar calibragem _calibrateButton.onRelease(..., 3000);
 }
 
 void CoCoJoystick::calibrationTimeout(void *obj) {
@@ -260,6 +258,7 @@ void CoCoJoystick::saveCalibration() {
 
 void CoCoJoystick::loadCalibration() {
   debugfunction("CoCoJoystick::loadCalibration()");
+
   if(_EEPROMOffset == -1) { 
     debugln("EEPROM Offset not set");
     _axisX.setDefault();

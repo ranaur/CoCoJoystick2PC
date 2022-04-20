@@ -6,7 +6,7 @@
 #ifndef CoCoJoystick_h
 #define CoCoJoystick_h
 
-#undef DEBUG
+//#define DEBUG
 
 #include "config.h"
 #include "Arduino.h"
