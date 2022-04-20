@@ -22,11 +22,11 @@ class ButtonEvent {
 		
 		void printState();
 	protected:
-		void printVar(char *name, uint32_t var);
 			// Config vars
 		int _pin;
 		int _pressedState;
 		int _pullup;
+    int _releasedState() { return _pressedState == LOW ? HIGH : LOW; }
 
 			// Transient vars
 		uint32_t _now;
@@ -36,6 +36,7 @@ class ButtonEvent {
 		const int debounceDelay = 10;
 		uint32_t _debounceTS;
 		int _lastDebounceState;
+    bool _debounced;
 		
 			// Press/Release Vars
 		int _lastStableState;

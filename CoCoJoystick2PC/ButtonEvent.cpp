@@ -30,6 +30,8 @@ void ButtonEvent::printState() {
 	debug("    Transient:");
 	debugvar("  _now = ", _now );
 	debugvar("  _state = ", _state );
+  debugvar("  _transition = ", _transition );
+ 
   debugln("");
 }
 
@@ -40,12 +42,12 @@ void ButtonEvent::setup(int pin, bool pullup = true, int pressedState = LOW) {
 
 	pinMode(_pin, _pullup ? INPUT_PULLUP : INPUT);
 	
-	_lastDebounceState = _pressedState == HIGH ? LOW : HIGH;
+	_lastDebounceState = _releasedState();
 	_debounceTS = millis();
-	
-	_lastStableState;
-	_pressedTS = _debounceTS;
-	_releasedTS = _debounceTS;
+
+  _pressedTS = _debounceTS;
+  _releasedTS = _debounceTS;
+  _lastStableState = _releasedState();
 }
 
 void ButtonEvent::loop(uint32_t now = millis()) {
@@ -53,52 +55,70 @@ void ButtonEvent::loop(uint32_t now = millis()) {
 
 	_now = now;
 
+  _transition = false;
 	_state = digitalRead(_pin);
 	if(_state != _lastDebounceState) {
 		_lastDebounceState = _state;
 		_debounceTS = _now;
 	}
 
-	_transition = false;
-	if(_now - _debounceTS > debounceDelay) {
-		if(_lastStableState != _state) {
-			_lastStableState = _state;
-			_transition = true;
-			if(_state == _pressedState) {
-				_pressedTS = _now;
-			} else {
-				_releasedTS = _now;
-			}
+  if(_now < _debounceTS + debounceDelay) {
+    debugln("debounce parole");
+    _debounced = false;
+    return; // in debounce parole
+  }
+  _debounced = true;
+	
+	if(_lastStableState != _state) {
+    _transition = true;
+    debugln("_transition = true;");
+		_lastStableState = _state;
+		if(_state == _pressedState) {
+      debugln("_pressedTS = _now;");
+			_pressedTS = _debounceTS;
+		} else {
+      debugln("_releasedTS = _now;");
+			_releasedTS = _debounceTS;
 		}
-	}
+	} //else { debugln("same state"); }
 }
 
 void ButtonEvent::onPressed(void(*callback)(uint32_t, void *), void *obj = null) {
+	if(!_debounced) return;
 	if(_state == _pressedState && _transition) {
 		callback(_now - _releasedTS, obj);
 	}
 }
 
 void ButtonEvent::onReleased(void(*callback)(uint32_t, void *), void *obj = null) {
+  if(!_debounced) return;
 	if(_state != _pressedState && _transition) {
 		callback(_now - _pressedTS, obj);
 	}
 }
 
 void ButtonEvent::onPressedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null) {
+  if(!_debounced) return;
 	if(_state == _pressedState) {
-	  if(_now - _pressedTS > forMs) {
+	  if((_now - _pressedTS) > forMs) {
+      printState();
       if(!actuated) {
+        /*debugvar("actuated = ", actuated);
+        debugvar(" now = ", _now);
+        debugvar(" _pressedTS = ", _pressedTS);
+        debugvar(" forMs = ", forMs);
+        debugln("");*/
         actuated = true;
         callback(obj);
       }
       return;
-  	}
+  	} //else { Serial.println("Not yet"); }
 	}
 	actuated = false;
 }
 
 void ButtonEvent::onReleasedFor(uint32_t forMs, void(*callback)(void *), bool &actuated, void *obj = null) {
+  if(!_debounced) return;
 	if(_state != _pressedState) {
 	  if(_now - _releasedTS > forMs) {
       if(!actuated) {
