@@ -8,11 +8,17 @@
  *       3          6 => Fire 2
  */
 #include "config.h"
-#define TWO_JOYSTICKS
 
 #include "CoCoJoystick.h"
 #include "ButtonEvent.h"
+#include "Blinker.h"
 #include "StateButtonEvent.h"
+
+//#define TWO_JOYSTICKS
+//#define ENABLE_INVERT_JOYSTICKS
+//#define DEBUG
+
+Blinker led;
 
 const int calibrateButtonPin = 8;
 const int calibrateLedPin = LED_BUILTIN;
@@ -29,11 +35,11 @@ const int EEPROMOffset = 0;
 const int joystick1PinX = A0; // DIN-6 Pin 1 - brown 
 const int joystick1PinY = A1; // DIN-6 Pin 2 - red
 // GND => DIN-6 Pin 3 - orange
-const int joystick1PinBTN_RED = 16; // DIN-6 Pin 4 - yellow
+const int joystick1PinBTN_RED = 11; // DIN-6 Pin 4 - yellow
 // +5 => DIN-6 Pin 5 - green
-const int joystick1PinBTN_BLACK = 14; // DIN-6 Pin 6 - blue
+const int joystick1PinBTN_BLACK = 10; // DIN-6 Pin 6 - blue
 #ifdef DETECT_JOYSTICK
-const int joystick1PinShell = 10; // mesh / outer shell
+const int joystick1PinShell = 9; // mesh / outer shell
 #else
 const int joystick1PinShell = -1;
 #endif
@@ -63,8 +69,22 @@ StateButtonEvent invertJoystickButton(2);
 
 #endif
 
+  // use red button for 10 seconds
+#define CALIBRATE 1
+  // use spare button
+//#define CALIBRATE 2
+
+#if CALIBRATE == 1
+unsigned long startTime;
+#endif
 
 void setup() {
+#if CALIBRATE == 1
+  startTime = millis();
+#endif
+
+  led.setup(calibrateLedPin);
+  led.setFade(32, 10);
   
   // TODO: OINK!
 #ifdef SerialPrintCoCoJoystickEvent_h
@@ -93,12 +113,15 @@ void setup() {
   joystick2.setup(joystick2PinX, joystick2PinY, joystick2PinBTN_RED, joystick2PinBTN_BLACK, joystick2PinShell, EEPROMOffset2);
 #endif
 
-  //debugStart();
-  while(!Serial) {}
-  debugfunction("::setup()");
-
-  debugfunction("::calibrateButton.setup()");
+  debugStart();
+#if CALIBRATE == 1
+  calibrateButton.setup(joystick1PinBTN_RED);
+  led.play(shortBliks);
+#endif
+#if CALIBRATE == 2
   calibrateButton.setup(calibrateButtonPin);
+#endif
+
 #ifdef ENABLE_INVERT_JOYSTICKS
   invertJoystickButton.setup(invertJoysticksPin);
 #endif
@@ -108,6 +131,7 @@ bool calibrateActuated = false;
 
 void calibrateStart(uint32_t forMs, void *obj) {
   debugfunction("::calibrateStart(...)");
+  delay(1000);
   joystick1.startCalibration();
 #ifdef TWO_JOYSTICKS
   joystick2.startCalibration();
@@ -130,12 +154,57 @@ void invertJoysticks(state_t state, void *obj) {
 }
 #endif
 
+#if CALIBRATE == 1
+void calibrateCenter(CoCoJoystick *obj) {
+  Serial.println("CENTER");
+  led.play(twiceBliks);
+}
+void calibrateFinish(CoCoJoystick *obj) {
+  Serial.println("FINISH");
+  calibrateActuated = true;
+  led.playOff();
+}
+
+void calibrateStart2(void *obj) {
+  led.play(onceBliks);
+  debugfunction("::calibrateStart(...)");
+  delay(200);
+  Serial.println("BEGIN");
+  joystick1.startCalibration(calibrateCenter, calibrateFinish);
+#ifdef TWO_JOYSTICKS
+  joystick2.startCalibration();
+#endif
+}
+void calibrateTest(uint32_t ms, void *obj) {
+  Serial.println("TEST");
+  return;
+}
+#define CALIBRATE_FIRST_SECS 60
+#endif
+
 void loop() {
   uint32_t now = millis();
 
+  led.loop(now);
   calibrateButton.loop(now);
-  calibrateButton.onPressedFor(10000, calibrateReset, calibrateActuated);
-  calibrateButton.onPressed(calibrateStart);
+#if CALIBRATE == 1
+  debugvar("calibrateActuated = ", calibrateActuated); debugln("");
+  if(!calibrateActuated)  
+  { 
+    if(now < startTime + CALIBRATE_FIRST_SECS * 1000l) { // first 60 seconds
+        calibrateButton.onPressedFor(5000, calibrateStart2, calibrateActuated);
+        //calibrateButton.onPressed(calibrateTest);
+    } else { // after CALIBRATE_FIRST_SECS seconds, can't calibrate anymore
+      calibrateActuated = true;
+      led.playOff();
+    }
+  }
+  
+#endif
+#if CALIBRATE == 2
+    calibrateButton.onPressedFor(10000, calibrateReset, calibrateActuated);
+    calibrateButton.onPressed(calibrateStart);
+#endif
 
 #ifdef ENABLE_INVERT_JOYSTICKS
   invertJoystickButton.loop(now);

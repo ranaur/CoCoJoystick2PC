@@ -48,8 +48,17 @@ CoCoGamepadConfig.h => Abstract class that represents the interface of the event
 # Usage
 
 ## Calibrate button
+If using a spare button for CALIBRATION (#define CALIBRATION 2)
 * If pressed, start calibration process. See "Calibration Process".
 * If pressed for 10 seconds, reset the calibration to defaults.
+
+If not using a spare button for CALIBRATION (#define CALIBRATION 1)
+During the first 60 seconds after inserting the USB connector, if the user press the red button for 5 seconds, the calibration process starts.
+	While it can be calibrated, the builtin led blinks continuously.
+	When the calibration starts, it blinks once per second and gather the extremes.
+	When you press the red button again, it blinks twice per second telling it is gathering the center region.
+	When you press the red button, times out, it finishes the calibration.
+	When the 60 seconds passes, it turns the led off.
 
 ## Calibration process
 
@@ -88,13 +97,22 @@ v0.3 - Now the HID report only what the joystick really have (2 axis and two but
 v0.3.1 - More refactor on calibration. Timeout in 10 sec. Button now resets calibration after 3 secs. Black button cancels calibration.
 v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 v0.5 - First version that handles two joysticks with one board. (if you don't want it, comment #define TWO_JOYSTICK in CoCoJoystick2PC.ino)
+v0.6 - Enhancements when handling two joysticks. Now calibration start if the user press the button for 5 seconds in the first 60 seconds after inserting the device.
+
 
 # TODO
 
 ## Next Steps
+
+* Do/Test Single report USB
+
 * Test on BAD USB
+	Single Joystick
 * Test it on ATTINY85
 	- Use LUFA to handle USB?
+* Automatic firing
+	- use potentiometer for time
+	- calibrate timing
 
 ## Waiting for the new board that works on breadboard
 * Add a repeater on buttons
@@ -111,24 +129,19 @@ v0.5 - First version that handles two joysticks with one board. (if you don't wa
 		value()
 	}
 
-* Create stateButton (B)
-	- each time it presses it advance the state
-	- save the state on flash memory
-	- stateButton(maxValue) {
-		onChange()
-		value()
-	}
-
 ## Two Joysticks, one box
 * Allow more than one joystick
 	* with 2 joysticks report as two devices
 		* On Gamepad Mode, report as one device, left Joy to the left axis control, right joy to right axis control, four buttons.
 	* Make it Double: answer as two joysticks if just one joystick is connected
 		(if detection is ok, answer always as two: if only one is connected, set the output to both.)
-	* Create Buttons/Switch config
-OK		* Swap joysticks left/right
-		* When just 1 joystick is connected: Answer as both joysticks
 
+## Test Detection
+	>> need to solder cables
+	* Connect reset to output with diode and make a programable "reset"
+	* detect which joysticks are present on setup and setup usb accordingly
+	* when a joystick is connected/disconnectes, resets to redo the report
+	* When just one joystick is connected use the single joystick as two joysticks
 ## Cosmetic changes
 * Change the Joystick name from "Arduino Leonardo" to "CoCo Joystick(s)"
 	- need to burn a new bootloader?
