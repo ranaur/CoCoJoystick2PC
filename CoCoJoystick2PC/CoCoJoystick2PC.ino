@@ -17,6 +17,7 @@
 //#define TWO_JOYSTICKS
 //#define ENABLE_INVERT_JOYSTICKS
 //#define DEBUG
+#define DETECT_JOYSTICK
 
 Blinker led;
 
@@ -35,11 +36,11 @@ const int EEPROMOffset = 0;
 const int joystick1PinX = A0; // DIN-6 Pin 1 - brown 
 const int joystick1PinY = A1; // DIN-6 Pin 2 - red
 // GND => DIN-6 Pin 3 - orange
-const int joystick1PinBTN_RED = 11; // DIN-6 Pin 4 - yellow
+const int joystick1PinBTN_RED = 9; // DIN-6 Pin 4 - yellow
 // +5 => DIN-6 Pin 5 - green
 const int joystick1PinBTN_BLACK = 10; // DIN-6 Pin 6 - blue
 #ifdef DETECT_JOYSTICK
-const int joystick1PinShell = 9; // mesh / outer shell
+const int joystick1PinShell = 11; // mesh / outer shell
 #else
 const int joystick1PinShell = -1;
 #endif

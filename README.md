@@ -98,7 +98,7 @@ v0.3.1 - More refactor on calibration. Timeout in 10 sec. Button now resets cali
 v0.4 - General cleanup, speedup, optimizations, specially on calibration.
 v0.5 - First version that handles two joysticks with one board. (if you don't want it, comment #define TWO_JOYSTICK in CoCoJoystick2PC.ino)
 v0.6 - Enhancements when handling two joysticks. Now calibration start if the user press the button for 5 seconds in the first 60 seconds after inserting the device.
-
+v0.6-BEETLE - version suitable to use in an Beetle Leonardo. BOM is only the [beetle board](https://www.aliexpress.com/item/1005003830541782.html), a DIN-6 Female Connector and wire to connect them. 
 
 # TODO
 
@@ -106,8 +106,6 @@ v0.6 - Enhancements when handling two joysticks. Now calibration start if the us
 
 * Do/Test Single report USB
 
-* Test on BAD USB
-	Single Joystick
 * Test it on ATTINY85
 	- Use LUFA to handle USB?
 * Automatic firing

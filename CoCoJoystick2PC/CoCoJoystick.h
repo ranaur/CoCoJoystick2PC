@@ -7,6 +7,7 @@
 #define CoCoJoystick_h
 
 //#define DEBUG
+#define DETECT_JOYSTICK
 
 #include "config.h"
 #include "Arduino.h"
