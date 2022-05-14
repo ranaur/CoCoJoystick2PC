@@ -63,12 +63,18 @@ class USBCoCoJoystickEvent : public CoCoJoystickEvent {
   private:
   int _buttonRed;
   int _buttonBlack;
-  
+  bool changed;
+    
   public:
 
   USBCoCoJoystickEvent() {
     static HIDSubDescriptor node(_hidMultiReportDescriptorCoCoJoystick, sizeof(_hidMultiReportDescriptorCoCoJoystick));
     HID().AppendDescriptor(&node);
+    _report.button1 = 0;
+    _report.button2 = 0;
+    _report.xAxis = 0;
+    _report.yAxis = 0;
+    changed = true; // send first report on first loop call
   };
   
   void setButtonNumbers(int buttonRed, int buttonBlack ) {
@@ -79,14 +85,14 @@ class USBCoCoJoystickEvent : public CoCoJoystickEvent {
   void joystickConnected() { releaseAll(); commit(); };
   void joystickDisconnected() { releaseAll(); commit(); };
 
-  void btnRedPress() { _report.button1 = 1; }
-  void btnRedRelease() { _report.button1 = 0; }
-  void btnBlackPress()  { _report.button2 = 1; }
-  void btnBlackRelease() { _report.button2 = 0; }
-  void axisXchange(int value) { _report.xAxis = value; };
-  void axisYchange(int value) { _report.yAxis = value; };
+  void btnRedPress() { _report.button1 = 1; changed = true; }
+  void btnRedRelease() { _report.button1 = 0; changed = true; }
+  void btnBlackPress()  { _report.button2 = 1; changed = true; }
+  void btnBlackRelease() { _report.button2 = 0; changed = true; }
+  void axisXchange(int value) { _report.xAxis = value; changed = true; };
+  void axisYchange(int value) { _report.yAxis = value; changed = true; };
 
-  void commit() { SendReport(&_report, sizeof(_report)); }
+  void commit() { if(changed) { SendReport(&_report, sizeof(_report)); changed = false; } }
 
 protected: 
   inline void releaseAll(void) { memset(&_report, 0x00, sizeof(_report)); };
